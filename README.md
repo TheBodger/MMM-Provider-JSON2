@@ -1,0 +1,1 @@
+# MMM-Provider-JSON2
