@@ -283,28 +283,27 @@ module.exports = NodeHelper.create({
 
 		var processArrayCount = 1;
 
-		if (Array.isArray(itemvalue)) {
-			processArrayCount = itemvalue.length;
-		}
-
-		if (Array.isArray(itemtimestamp)) {
-			if (processArrayCount == 1) {
-				processArrayCount = itemtimestamp.length;
-			}
-			else {
-				processArrayCount = Math.min(itemtimestamp.length, processArrayCount);
-			}
-		}
+		[processArrayCount, itemvalue] = this.checkFieldArray(processArrayCount, itemvalue);
+		[processArrayCount, itemobject] = this.checkFieldArray(processArrayCount, itemobject);
+		[processArrayCount, itemtimestamp] = this.checkFieldArray(processArrayCount, itemtimestamp);
+		[processArrayCount, itemsubject] = this.checkFieldArray(processArrayCount, itemsubject);
 
 		//code assumes that each entry if an array will simply add the next entry
 		//until the minimum entries have been added
 
 		for (let i = 0; i < processArrayCount; i++) {
 
-			var ndftitem = new NDTFstructure.NDTFItem()
+			var ndftitem = new NDTFstructure.NDTFItem();
+
+			ndftitem.subject = itemsubject;
+			if (Array.isArray(itemsubject)) {
+				ndftitem.subject = itemsubject[i];
+			}
 
 			ndftitem.object = itemobject;
-			ndftitem.subject = itemsubject;
+			if (Array.isArray(itemobject)) {
+				ndftitem.object = itemobject[i];
+			}
 
 			ndftitem.timestamp = itemtimestamp;
 			if (Array.isArray(itemtimestamp)) {
@@ -319,6 +318,24 @@ module.exports = NodeHelper.create({
 			this.payloads[moduleinstance].Payload.NDTF.push(ndftitem);
 			this.payloads[moduleinstance].Payload.ItemsSent.push(false);
 		}
+	},
+
+	checkFieldArray: function (processArrayCount, item) {
+
+		if (Array.isArray(item)) {
+			if (item.length < 2) {
+				//if only one item in the array, then just use that item
+				if (item.length == 1) { item = item[0]; }
+				else { item = ""; }
+			}
+			else
+				// get the minimum lowest array length of all arrays left
+
+				if (processArrayCount == 1) { processArrayCount = item.length; }
+				else { processArrayCount = Math.min(item.length, processArrayCount) }
+		}
+
+		return [processArrayCount, item];
 	}
 
 });
