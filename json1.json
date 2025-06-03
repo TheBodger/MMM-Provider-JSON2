@@ -1,0 +1,68 @@
+{
+	"chart": {
+		"result": [
+			{
+				"meta": {
+					"currency": "USD",
+					"symbol": "TJX",
+					"exchangeName": "NYQ",
+					"fullExchangeName": "NYSE",
+					"instrumentType": "EQUITY",
+					"firstTradeDate": 551712600,
+					"regularMarketTime": 1748881949,
+					"hasPrePostMarketData": true,
+					"gmtoffset": -14400,
+					"timezone": "EDT",
+					"exchangeTimezoneName": "America/New_York",
+					"regularMarketPrice": 127.22,
+					"fiftyTwoWeekHigh": 135.85,
+					"fiftyTwoWeekLow": 103.7,
+					"regularMarketDayHigh": 127.41,
+					"regularMarketDayLow": 125.89,
+					"regularMarketVolume": 1618288,
+					"longName": "The TJX Companies, Inc.",
+					"shortName": "TJX Companies, Inc. (The)",
+					"chartPreviousClose": 126.78,
+					"priceHint": 2,
+					"currentTradingPeriod": {
+						"pre": {
+							"timezone": "EDT",
+							"start": 1748851200,
+							"end": 1748871000,
+							"gmtoffset": -14400
+						},
+						"regular": {
+							"timezone": "EDT",
+							"start": 1748871000,
+							"end": 1748894400,
+							"gmtoffset": -14400
+						},
+						"post": {
+							"timezone": "EDT",
+							"start": 1748894400,
+							"end": 1748908800,
+							"gmtoffset": -14400
+						}
+					},
+					"dataGranularity": "1d",
+					"range": "1d",
+					"validRanges": [ "1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max" ]
+				},
+				"timestamp": [ 1748881949 ],
+				"indicators": {
+					"quote": [
+						{
+							"open": [ 126.25 ],
+							"close": [ 127.22049713134766 ],
+							"high": [ 127.41000366210938 ],
+							"low": [ 125.88999938964844 ],
+							"volume": [ 1618288 ]
+						}
+					],
+					"adjclose": [ { "adjclose": [ 127.22049713134766 ] } ]
+				}
+			}
+		],
+		"error": null
+	}
+}
