@@ -48,7 +48,7 @@ Module.register("MMM-Provider-JSON2", {
 
 	getScripts: function () { 
 		return [
-			//this.file('../MMM-Provider-Consumer-utils/payload.js'), // this file will be loaded straight from the module folder.
+
 		]
 	},
 

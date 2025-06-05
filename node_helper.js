@@ -15,11 +15,7 @@
 
 const NodeHelper = require("node_helper");
 
-const Configurations = require("../MMM-Provider-Consumer-utils/configurations.js");
-const PayloadTracker = require("../MMM-Provider-Consumer-utils/payload_tracker.js");
-const Payload = require("../MMM-Provider-Consumer-utils/payload.js");
-
-const NDTFstructure = require("../MMM-ChartUtilities/structures.js")
+const Structures = require("../MMM-structures/MMM-structures.js")
 
 //JSON2 stuff
 
@@ -34,8 +30,8 @@ const utilities = require("../MMM-ChartUtilities/common");
 module.exports = NodeHelper.create({
 
   start: function () {
-		this.configurations = new Configurations();
-		this.payloadTracker = new PayloadTracker();
+		this.configurations = new Structures.Configurations();
+		this.payloadTracker = new Structures.PayloadTracker();
 		this.debug = false;
 		this.payloads = [];
 		console.log(this.name + ' node_helper is started!');
@@ -54,7 +50,7 @@ module.exports = NodeHelper.create({
 
 		this.payloadTracker.addTracker(moduleinstance, config);
 
-		this.payloads[moduleinstance] = new Payload.NodePayload(config.payloadType,moduleinstance,config.id);
+		this.payloads[moduleinstance] = new Structures.NodePayload(config.payloadType,moduleinstance,config.id);
 
 	},
 
@@ -108,57 +104,62 @@ module.exports = NodeHelper.create({
 				this.agent = http;
 			}
 
-			//this.agent.headers = {
-			//	"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-			//	"Accept-Encoding": "gzip, deflate, br, zstd",
-			//	"Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
-			//	"Dnt": "1",
-			//	"Host": "httpbin.org",
-			//	"Priority": "u=0, i",
-			//	"Sec-Ch-Ua": "\"Microsoft Edge\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"",
-			//	"Sec-Ch-Ua-Mobile": "?0",
-			//	"Sec-Ch-Ua-Platform": "\"Windows\"",
-			//	"Sec-Fetch-Dest": "document",
-			//	"Sec-Fetch-Mode": "navigate",
-			//	"Sec-Fetch-Site": "none",
-			//	"Sec-Fetch-User": "?1",
-			//	"Upgrade-Insecure-Requests": "1",
-			//	"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
-			//};
-
 			const options = {
 				headers: {
 					"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-					"Accept-Encoding": "gzip, deflate, br, zstd",
+					"Accept-Encoding": "deflate, br, zstd", //gzip, 
 					"Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
-					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0"
+					"Dnt": "1",
+
+					"Priority": "u=0, i",
+					"Sec-Ch-Ua": "\"Microsoft Edge\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"",
+					"Sec-Ch-Ua-Mobile": "?0",
+					"Sec-Ch-Ua-Platform": "\"Windows\"",
+					"Sec-Fetch-Dest": "document",
+					"Sec-Fetch-Mode": "navigate",
+					"Sec-Fetch-Site": "none",
+					"Sec-Fetch-User": "?1",
+					"Upgrade-Insecure-Requests": "1",
+					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0",
+					"X-Amzn-Trace-Id": "Root=1-6840cccb-419701ed64dbd17404327ef4"
 				}
 			};
 
 			this.agent.get(URL, options, res => {
-				let data = [];
+
+				let sourceHost = res.client._host;
 				const headerDate = res.headers && res.headers.date ? res.headers.date : 'no response date';
+
 				console.log('Status Code:', res.statusCode + " " + URL);
 				console.log('Date in Response header:', headerDate);
 
+				let rawData = '';
+
 				res.on('data', chunk => {
-					data.push(chunk);
+					rawData += chunk;;
+					//JSONData = JSON.parse(Buffer.concat(data).toString());
 				});
 
 				res.on('end', () => {
 					
-					const JSONData = JSON.parse(Buffer.concat(data).toString());
-					console.log('Response ended: ');
-					self.update(moduleinstance, JSONData, jsonsource.itemfields);
+					try {
+						const JSONData = JSON.parse(rawData);
+						console.log(JSONData);
+						self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost);
+
+					} catch (e) {
+						console.error(e.message);
+					}
 
 				});
-				}).on('error', err => {
+
+				}).on('error', (err) => {
 					console.log('Error: ', err.message);
 			});
 		})
 	},
 
-	update: function (moduleinstance, data,itemfields) {
+	update: function (moduleinstance, data, itemfields, sourceURL) {
 
 		//process the actual data here and return to main module.
 		//adjust the call to process if this is to be used for other data types
@@ -180,6 +181,8 @@ module.exports = NodeHelper.create({
 
 		if (this.configurations.configuration[moduleinstance].payloadType == "NDTF")
 		{
+
+			this.payloads[moduleinstance].Payload.JSONsource = sourceURL;
 			//loop for each set of itemfields found in the configuration
 			//option 2 - subject = keyvalue (i.e. id or name, object = key name, value is value)
 
@@ -293,7 +296,7 @@ module.exports = NodeHelper.create({
 
 		for (let i = 0; i < processArrayCount; i++) {
 
-			var ndftitem = new NDTFstructure.NDTFItem();
+			var ndftitem = new Structures.NDTFItem();
 
 			ndftitem.subject = itemsubject;
 			if (Array.isArray(itemsubject)) {
