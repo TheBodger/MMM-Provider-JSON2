@@ -16,16 +16,16 @@
 const NodeHelper = require("node_helper");
 
 const Structures = require("../MMM-structures/MMM-structures.js")
+const Utilities = require("../MMM-utilities/MMM-utilities.js");
 
 //JSON2 stuff
 
-var http = require('node:http')
-var https = require('node:https')
+const http = require('node:http')
+const https = require('node:https')
 
-const utilities = require("../MMM-ChartUtilities/common");
+const fs = require("node:fs");
 
 // 
-
 
 module.exports = NodeHelper.create({
 
@@ -48,7 +48,7 @@ module.exports = NodeHelper.create({
 
 		this.configurations.addConfiguration(moduleinstance, config);
 
-		this.payloadTracker.addTracker(moduleinstance, config);
+		this.payloadTracker.addTracker(moduleinstance);
 
 		this.payloads[moduleinstance] = new Structures.NodePayload(config.payloadType,moduleinstance,config.id);
 
@@ -93,37 +93,55 @@ module.exports = NodeHelper.create({
 
 		const self = this;
 
-		this.configurations.configuration[moduleinstance].jsonsource.forEach(function (jsonsource) { 
+		const options = {
+			headers: {
+				"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
+				"Accept-Encoding": "deflate, br, zstd", //gzip, 
+				"Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
+				"Dnt": "1",
+
+				"Priority": "u=0, i",
+				"Sec-Ch-Ua": "\"Microsoft Edge\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"",
+				"Sec-Ch-Ua-Mobile": "?0",
+				"Sec-Ch-Ua-Platform": "\"Windows\"",
+				"Sec-Fetch-Dest": "document",
+				"Sec-Fetch-Mode": "navigate",
+				"Sec-Fetch-Site": "none",
+				"Sec-Fetch-User": "?1",
+				"Upgrade-Insecure-Requests": "1",
+				"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0",
+				"X-Amzn-Trace-Id": "Root=1-6840cccb-419701ed64dbd17404327ef4"
+			}
+		};
+
+		this.configurations.configuration[moduleinstance].jsonSource.forEach(function (jsonsource) {
 
 			var URL = jsonsource.url;
+			var tURL = null
 
-			if (URL.substring(0, 5) == 'https') {
+			jsonsource.sourceParams.useAutoFile = false; //assume we are going to call API
+
+			if (jsonsource.sourceParams.autoFileUse) //check if there is a current autoFile in place to use
+
+			{
+				tURL = Utilities.getAutoFileName(jsonsource.sourceName, jsonsource.sourceParams.autoFileFormat);
+				//console.log("Using auto file: " + URL);
+				jsonsource.sourceParams.useAutoFile = Utilities.autoFileExists(tURL); //check if the file exists for required date/time
+				if (jsonsource.sourceParams.useAutoFile) {
+					URL = tURL; //use the auto file name
+				}
+
+			}
+
+			if (URL.substring(0, 5) == 'file:') {
+				this.agent = new Utilities.file();
+			}
+			else if (URL.substring(0, 6) == 'https:') {
 				this.agent = https;
 			}
 			else {
 				this.agent = http;
 			}
-
-			const options = {
-				headers: {
-					"Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7",
-					"Accept-Encoding": "deflate, br, zstd", //gzip, 
-					"Accept-Language": "en-GB,en;q=0.9,en-US;q=0.8",
-					"Dnt": "1",
-
-					"Priority": "u=0, i",
-					"Sec-Ch-Ua": "\"Microsoft Edge\";v=\"137\", \"Chromium\";v=\"137\", \"Not/A)Brand\";v=\"24\"",
-					"Sec-Ch-Ua-Mobile": "?0",
-					"Sec-Ch-Ua-Platform": "\"Windows\"",
-					"Sec-Fetch-Dest": "document",
-					"Sec-Fetch-Mode": "navigate",
-					"Sec-Fetch-Site": "none",
-					"Sec-Fetch-User": "?1",
-					"Upgrade-Insecure-Requests": "1",
-					"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0",
-					"X-Amzn-Trace-Id": "Root=1-6840cccb-419701ed64dbd17404327ef4"
-				}
-			};
 
 			this.agent.get(URL, options, res => {
 
@@ -136,15 +154,39 @@ module.exports = NodeHelper.create({
 				let rawData = '';
 
 				res.on('data', chunk => {
-					rawData += chunk;;
-					//JSONData = JSON.parse(Buffer.concat(data).toString());
+					rawData += chunk;
 				});
 
 				res.on('end', () => {
 					
 					try {
+
 						const JSONData = JSON.parse(rawData);
-						console.log(JSONData);
+						
+						if (jsonsource.file && jsonsource.file != "")
+						{
+							fs.writeFile(jsonsource.file, JSON.stringify(JSONData), err => {
+								if (err) {
+									console.error(err);
+								} else {
+									console.log("Written JSON File: " + jsonsource.file);
+								}
+							});
+						}
+
+						if (jsonsource.sourceParams.autoFileUse && !jsonsource.sourceParams.useAutoFile) //no auto file available
+						{
+							//create the auto file for the next time
+							tURL = tURL.replace(/^file:\/{3}/, "");
+							fs.writeFile(tURL, JSON.stringify(JSONData), err => {
+								if (err) {
+									console.error(err);
+								} else {
+									console.log("Written autoUseFile : " + tURL);
+								}
+							});
+						}
+
 						self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost);
 
 					} catch (e) {
@@ -153,10 +195,10 @@ module.exports = NodeHelper.create({
 
 				});
 
-				}).on('error', (err) => {
-					console.log('Error: ', err.message);
+				//}).on('error', (err) => {
+				//	console.log('Error: ', err.message);
 			});
-		})
+		}) //loop through the jsonsource
 	},
 
 	update: function (moduleinstance, data, itemfields, sourceURL) {
@@ -172,9 +214,30 @@ module.exports = NodeHelper.create({
 
 		if (this.configurations.configuration[moduleinstance].payloadType == "RSS")
 		{
-			this.payloads[moduleinstance].Payload.RSSFeedSource = moduleinstance;
-			this.payloads[moduleinstance].Payload.Items.push({ "ITEM": moduleinstance });
-			this.payloads[moduleinstance].Payload.Items.push({ "fred": "george" });
+			
+			var title = "Testing RSS Item";
+			var pubdate = new Date().toISOString();
+			pubdate = new Date("2025-01-01").toISOString(); //force the same data so key is same so only 1 item is added
+
+			var RSSItem = new Structures.RSSItem();
+
+			//key
+
+			RSSItem.id = RSSItem.gethashCode(title + pubdate);
+
+			//check the tracker to see if this item has been sent before
+
+			if (!this.payloadTracker.addItem(moduleinstance, RSSItem.id)) {
+				console.log("Adding RSS Item: " + RSSItem.id);
+
+				RSSItem.Title = title;
+				RSSItem.PubDate = pubdate; // the time the RSS feed was last updated
+				RSSItem.Description = "This is a test RSS item";
+
+				this.payloads[moduleinstance].Payload.RSSFeedSource = moduleinstance;
+				this.payloads[moduleinstance].Payload.Items.push(RSSItem);
+			}
+
 		}
 
 		//NDTF
@@ -183,16 +246,6 @@ module.exports = NodeHelper.create({
 		{
 
 			this.payloads[moduleinstance].Payload.JSONsource = sourceURL;
-			//loop for each set of itemfields found in the configuration
-			//option 2 - subject = keyvalue (i.e. id or name, object = key name, value is value)
-
-			//i.e. subject:fred,object:age,value:30,timestamp:2023-10-01T12:00:00Z (fred was 30 on this date))
-			//allows to create multiple entries that can be merged (usign the sets stuff in NDTF))
-
-			//unpack the json data from data if required here
-			//this.configurations.configuration[moduleinstance].itemfields = [{ "useSubjectKey": false, "root": "", "type": "array", "object": "name", "subject": "users", "timestamp": "" }]; // this is the list of fields in the data that map to to be used in the NDTF structure
-
-			// process the data against config requested
 
 			itemfields.forEach(function (itemfield) 
 			{
@@ -210,7 +263,7 @@ module.exports = NodeHelper.create({
 				var JSONData = data;
 
 				if (itemfield.root && itemfield.root != "") {
-					JSONData = utilities.getkeyedJSON(data,itemfield.root);
+					JSONData = Utilities.getkeyedJSON(data,itemfield.root);
 				}
 
 				if (itemfield.type == "array") {
@@ -232,52 +285,31 @@ module.exports = NodeHelper.create({
 
 		var newpayload = this.payloads[moduleinstance].clone();
 
-		newpayload.Payload = this.trackPayloadItems(this.payloads[moduleinstance]); 
+		//here we track the payload items to ensure that only unsent items are sent to the consumer, and mark them as sent
+		newpayload.Payload = Utilities.trackPayloadItems(newpayload, this.payloadTracker, moduleinstance);
 
-		this.sendUpdate("UPDATED_STUFF", newpayload);
-	},
+		//if the payload is empty, then we do not send it
 
-	trackPayloadItems: function (moduleInstancePayload) {
-
-		//will ensure that only unsent payload itesm are sent to the consumer
-
-		var newpayload = moduleInstancePayload.Payload.clone();
-
-		if (moduleInstancePayload.PayloadType == "NDTF") {
-			//as we are deleting from array using an index need to do this in reverse order to avoid index issues
-
-			for (let itemIdx = newpayload.ItemsSent.length-1; itemIdx >= 0; itemIdx--) {
-
-				if (moduleInstancePayload.Payload.ItemsSent[itemIdx]) {
-					newpayload.NDTF.splice(itemIdx, 1); // remove the specific item from output from the payload
-
-				}
-				else {
-					moduleInstancePayload.Payload.ItemsSent[itemIdx] = true; // mark the item as sent
-					newpayload.ItemsSent[itemIdx] = true;
-				}
-
-			}
+		if ((newpayload.Payload.Items && newpayload.Payload.Items.length > 0) || (newpayload.Payload.NDTF && newpayload.Payload.NDTF.length > 0)) {
+			this.sendUpdate("NEW_DATA", newpayload);
 		}
-
-		return newpayload;
 	},
 
 	processJSONitem: function (obj, itemfield, moduleinstance) {
 
 		if (itemfield.timestamp) {
-			itemtimestamp = utilities.getkeyedJSON(obj, itemfield.timestamp);
+			itemtimestamp = Utilities.getkeyedJSON(obj, itemfield.timestamp);
 		}//may not be present
 
 		itemvalue = obj[itemfield.value];
 
 		if (itemfield.value != null) {
-			var itemvalue = utilities.getkeyedJSON(obj, itemfield.value);
+			var itemvalue = Utilities.getkeyedJSON(obj, itemfield.value);
 		}
 
-		itemobject = utilities.getkeyedJSON(obj, itemfield.object);
+		itemobject = Utilities.getkeyedJSON(obj, itemfield.object);
 
-		if (itemfield.useSubjectKey) { itemsubject = utilities.getkeyedJSON(obj, itemfield.subject); }
+		if (itemfield.useSubjectKey) { itemsubject = Utilities.getkeyedJSON(obj, itemfield.subject); }
 
 		//if any returned field is an array, then all fields that are arrays need to be aligned and
 		//multiple items added to the payload
@@ -296,30 +328,38 @@ module.exports = NodeHelper.create({
 
 		for (let i = 0; i < processArrayCount; i++) {
 
-			var ndftitem = new Structures.NDTFItem();
+			var NDTFItem = new Structures.NDTFItem();
 
-			ndftitem.subject = itemsubject;
+			NDTFItem.subject = itemsubject;
 			if (Array.isArray(itemsubject)) {
-				ndftitem.subject = itemsubject[i];
+				NDTFItem.subject = itemsubject[i];
 			}
 
-			ndftitem.object = itemobject;
+			NDTFItem.object = itemobject;
 			if (Array.isArray(itemobject)) {
-				ndftitem.object = itemobject[i];
+				NDTFItem.object = itemobject[i];
 			}
 
-			ndftitem.timestamp = itemtimestamp;
+			NDTFItem.timestamp = itemtimestamp;
 			if (Array.isArray(itemtimestamp)) {
-				ndftitem.timestamp = itemtimestamp[i];
+				NDTFItem.timestamp = itemtimestamp[i];
 			}
 
-			ndftitem.value = itemvalue;
+			NDTFItem.value = itemvalue;
 			if (Array.isArray(itemvalue)) {
-				ndftitem.value = itemvalue[i];
+				NDTFItem.value = itemvalue[i];
 			}
 
-			this.payloads[moduleinstance].Payload.NDTF.push(ndftitem);
-			this.payloads[moduleinstance].Payload.ItemsSent.push(false);
+			//check if we have already sent this item
+
+			var key = NDTFItem.gethashCode(NDTFItem.subject + NDTFItem.object + NDTFItem.timestamp); //can include value if really needed
+
+			if (!this.payloadTracker.addItem(moduleinstance, key)) {
+
+				this.payloads[moduleinstance].Payload.NDTF.push(NDTFItem);
+				this.payloads[moduleinstance].Payload.keys.push(key);
+			}
+
 		}
 	},
 

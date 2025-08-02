@@ -21,10 +21,10 @@ Module.register("MMM-Provider-JSON2", {
 
 		payloadType: "NDTF", //options RSS or NDTF
 
-		oldestAge : null, // – in milliseconds – ignore anything older – default for ever ago / null / none
+		oldestAge: null, // – in milliseconds – ignore anything older – default for ever ago / null / none
 		youngestAge: null, // – in milliseconds – ignore anything younger than this – default now(null / none)
 		Dedup: false, // true/false – remove duplicates, implies tracking
-		trackTimestamp:false, // – use timestamp of incoming data true/false
+		trackTimestamp: false, // – use timestamp of incoming data true/false
 		trackID: false, // – use(pseudo/ hash) id to track data
 		trackField: [], // – where to look for the Data(s) to track, defined as json field or hard coded RSS fields
 
@@ -32,16 +32,20 @@ Module.register("MMM-Provider-JSON2", {
 
 		//json-2 specific config options
 
-		jsonfeeds: [
+		jsonSource:
+		[
 			{
-				jsonsource: [{
-					urlparams: [],
-					url: "",
-					itemfields: []
-				}],
-				file: null,				// | No | the filename to write the payload to for debug etc purposes | any valid file name | none
+			sourceName: null, // default is the module name and a counter in order of the jsonSources, if present must be unique within the system
+			sourceParams: {
+				autoFileUse: false, // true/false – use the provided date / time format to determine if a API pull is required
+				autoFileFormat: "YYYYMMDD", // – the date format to use for the auto file name, default is YYYYMMDD i.e. daily pull. also hhmmss and even fff for fractions of seconds
+				//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
+				//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
 			},
-
+			url: "", //formatted as http:// or https:// or file:///
+			itemfields: [],
+			file: null,				// | No | the filename to write the payload to for debug etc purposes | any valid file name | none
+			}
 		],
 
 	},
@@ -64,6 +68,72 @@ Module.register("MMM-Provider-JSON2", {
 
 		this.sendNotificationToNodeHelper("CONFIG", { moduleinstance: this.identifier, config: this.config });
 		this.sendNotificationToNodeHelper("STATUS", { moduleinstance: this.identifier });
+
+	},
+
+	// we have to override the default setConfig as we will be merging a deep clone !!
+	setConfig: function (config) {
+
+		this.config = this.mergeConfigs(this.defaults, config);
+
+		this.config.jsonSource.forEach(source => {
+			if (!source.sourceName) {
+				source.sourceName = `${this.name}_${this.config.jsonSource.indexOf(source)}`;
+			}
+
+		})
+	},
+
+	mergeConfigs: function (defaults, config) {
+
+		//basic merge the config and defaults
+		var mergedConfig = Object.assign({}, defaults, config);
+
+		//recurse through the merged config looking for any arrays.
+		//for each array, use the default values to fill any missing key/value pairs in the array
+
+		Object.keys(mergedConfig).forEach((key) => {
+			if (Array.isArray(mergedConfig[key])) {
+				mergedConfig[key] = this.fillArrayDefaults(mergedConfig[key], defaults[key][0])
+			}
+			else if (typeof mergedConfig[key] == 'object') {
+				mergedConfig[key] = this.fillObjectDefaults(mergedConfig[key], defaults[key]);
+			}
+		});
+
+		return mergedConfig;
+	},
+
+	fillArrayDefaults: function(array, defaults) {
+
+		if(!Array.isArray(array)) {
+			return array;
+		}
+
+		return array.map(item => {
+			if (typeof item !== 'object' || item === null) {
+				return item; // If it's not an object, return it as is
+			}
+			return this.fillObjectDefaults(item, defaults);
+		});
+	},
+
+	 fillObjectDefaults: function(config, defaults) {
+
+		//iterate through the items in the object and fill in any missing keys with the defaults recursively
+		for (const key in defaults) {
+			if (defaults.hasOwnProperty(key)) {
+				if (!config.hasOwnProperty(key)) {
+					config[key] = defaults[key]; // If the key is missing, add it with the default value
+				} else if (Array.isArray(config[key])) {
+					config[key] = this.fillArrayDefaults(config[key], defaults[key][0]); // If it's an array, fill it with defaults
+				} else if (typeof config[key] === 'object' && config[key] !== null) {
+					config[key] = this.fillObjectDefaults(config[key], defaults[key]); // If it's an object, recurse
+				}
+			}
+		}
+
+		return config; // Return the modified object
 
 	},
 
@@ -107,7 +177,7 @@ Module.register("MMM-Provider-JSON2", {
 
 	socketNotificationReceived: function (notification, payload) {
 
-		if (notification == "UPDATED_STUFF") {
+		if (notification == "NEW_DATA") {
 			if (this.identifier == payload.TargetInstanceID) { //only process updates that are for this module instance
 
 				if (this.config.showDOM) {
@@ -131,7 +201,6 @@ Module.register("MMM-Provider-JSON2", {
 	getDom() {
 		const wrapper = document.createElement("div")
 		wrapper.innerHTML = `<b>${this.identifier}</b><br />${this.templateContent}`
-
 		return wrapper
 	},
 

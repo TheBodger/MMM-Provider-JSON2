@@ -1,0 +1,68 @@
+{
+	"chart": {
+		"result": [
+			{
+				"meta": {
+					"currency": "USD",
+					"symbol": "TJX",
+					"exchangeName": "NYQ",
+					"fullExchangeName": "NYSE",
+					"instrumentType": "EQUITY",
+					"firstTradeDate": 551712600,
+					"regularMarketTime": 1751562002,
+					"hasPrePostMarketData": true,
+					"gmtoffset": -14400,
+					"timezone": "EDT",
+					"exchangeTimezoneName": "America/New_York",
+					"regularMarketPrice": 125.86,
+					"fiftyTwoWeekHigh": 135.85,
+					"fiftyTwoWeekLow": 107.71,
+					"regularMarketDayHigh": 126.11,
+					"regularMarketDayLow": 124.77,
+					"regularMarketVolume": 2986646,
+					"longName": "The TJX Companies, Inc.",
+					"shortName": "TJX Companies, Inc. (The)",
+					"chartPreviousClose": 122.14,
+					"priceHint": 2,
+					"currentTradingPeriod": {
+						"pre": {
+							"timezone": "EDT",
+							"end": 1751549400,
+							"start": 1751529600,
+							"gmtoffset": -14400
+						},
+						"regular": {
+							"timezone": "EDT",
+							"end": 1751562000,
+							"start": 1751549400,
+							"gmtoffset": -14400
+						},
+						"post": {
+							"timezone": "EDT",
+							"end": 1751587200,
+							"start": 1751562000,
+							"gmtoffset": -14400
+						}
+					},
+					"dataGranularity": "1d",
+					"range": "5d",
+					"validRanges": [ "1d", "5d", "1mo", "3mo", "6mo", "1y", "2y", "5y", "10y", "ytd", "max" ]
+				},
+				"timestamp": [ 1751031000, 1751290200, 1751376600, 1751463000, 1751549400 ],
+				"indicators": {
+					"quote": [
+						{
+							"volume": [ 9786300, 6228000, 5126200, 4790200, 2986600 ],
+							"high": [ 123.79000091552734, 123.98999786376953, 125.6500015258789, 125.62999725341797, 126.11000061035156 ],
+							"open": [ 121.9800033569336, 123.98999786376953, 123.66999816894531, 125.38999938964844, 125.3499984741211 ],
+							"close": [ 123.37999725341797, 123.48999786376953, 125.16000366210938, 125.30999755859375, 9999.860000610352 ],
+							"low": [ 121.63999938964844, 122.26000213623047, 123.16000366210938, 124.30999755859375, 124.7699966430664 ]
+						}
+					],
+					"adjclose": [ { "adjclose": [ 123.37999725341797, 123.48999786376953, 125.16000366210938, 125.30999755859375, 125.86000061035156 ] } ]
+				}
+			}
+		],
+		"error": null
+	}
+}
