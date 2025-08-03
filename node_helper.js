@@ -15,8 +15,8 @@
 
 const NodeHelper = require("node_helper");
 
-const Structures = require("../MMM-structures/MMM-structures.js")
-const Utilities = require("../MMM-utilities/MMM-utilities.js");
+const Structures = require("../MMM-Structures/MMM-Structures.js")
+const Utilities = require("../MMM-Utilities/MMM-Utilities.js");
 
 //JSON2 stuff
 
