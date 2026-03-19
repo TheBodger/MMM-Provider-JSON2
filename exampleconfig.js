@@ -50,7 +50,7 @@ let config = {
 			},
 		},
 		{
-			//example json 2 get closing share price from yahoo finance, note the dot naotion used in the itemfields to indicate the root, and then within that object, the fields to use
+			//example json 2 get closing share price from yahoo finance, note the dot notation used in the itemfields to indicate the root, and then within that object, the fields to use
 			//.0 indicated take first entry in a json array
 
 			module: "MMM-Provider-JSON2",
