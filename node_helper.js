@@ -539,6 +539,7 @@ module.exports = NodeHelper.create({
 		//if the payload is empty, then we do not send it
 
 		if ((newpayload.Payload.Items && newpayload.Payload.Items.length > 0) || (newpayload.Payload.NDTF && newpayload.Payload.NDTF.length > 0)) {
+			console.log("Sending update with " + (newpayload.Payload.Items ? newpayload.Payload.Items.length : newpayload.Payload.NDTF.length) + " items");
 			this.sendUpdate("NEW_DATA", newpayload);
 		}
 	},
