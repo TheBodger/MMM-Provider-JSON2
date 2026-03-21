@@ -214,7 +214,7 @@ Module.register("MMM-Provider-JSON2", {
 				modulePayload.TargetID = this.config.consumerids[0]; // the module instance that is receiving the payload / may be a list of them !!
 				modulePayload.PayloadType = payload.PayloadType; //options RSS or NDTF
 				modulePayload.Payload = payload.Payload; // the payload itself, which is a JSON object
-
+				console.log("modulePayload size: " + JSON.stringify(modulePayload).length + " bytes");
 				this.sendNotification('PROVIDER_UPDATE', modulePayload);
 				Log.log("Sent some new data @ " + modulePayload.TargetID);
 			}

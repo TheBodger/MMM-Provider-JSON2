@@ -540,10 +540,70 @@ module.exports = NodeHelper.create({
 
 		if ((newpayload.Payload.Items && newpayload.Payload.Items.length > 0) || (newpayload.Payload.NDTF && newpayload.Payload.NDTF.length > 0)) {
 			console.log("Sending update with " + (newpayload.Payload.Items ? newpayload.Payload.Items.length : newpayload.Payload.NDTF.length) + " items");
-			this.sendUpdate("NEW_DATA", newpayload);
+
+			// need to rate limit the amoutn of data we send here
+			// limit to approx 800kb payload size
+
+			// 1) split the payload part from the wrapper
+			// 2) rebuild the payload by cuttining into chunks of items until we get to the size limit, and send each chunk as a separate update
+			// 3) there needs to be a small deelay between each update to allow the consumer to process the data and avoid a backlog of updates building up in the queue
+
+			// 1 - split depending on payload type.
+
+			if (newpayload.PayloadType == "NDTF") {
+
+				this.sendChunkedUpdate(newpayload); // split into chunks and send
+
+			}
+			else {
+				this.sendUpdate("NEW_DATA", newpayload); // send all RSS for time being
+			}
 		}
 	},
+	sendChunkedUpdate: function (newpayload, maxSizeBytes = 600 * 1024) {
 
+		// if it fits in one message, just send it
+		if (JSON.stringify(newpayload).length <= maxSizeBytes) {
+			this.sendSocketNotification("NEW_DATA", newpayload);
+			return;
+		}
+
+		const ndtfItems = newpayload.Payload.NDTF;
+		const ndtfKeys = newpayload.Payload.keys;
+		const totalItems = ndtfItems.length;
+
+		// estimate how many items fit per chunk based on average item size
+		const totalPayloadSize = JSON.stringify(newpayload).length;
+		const avgItemSize = totalPayloadSize / totalItems;
+		const metadataSize = JSON.stringify({ ...newpayload, Payload: { ...newpayload.Payload, NDTF: [], keys: [] } }).length;
+		const itemsPerChunk = Math.floor((maxSizeBytes - metadataSize) / avgItemSize);
+
+		let chunkNumber = 0;
+		const totalChunks = Math.ceil(totalItems / itemsPerChunk);
+
+		for (let i = 0; i < totalItems; i += itemsPerChunk) {
+
+			const chunk = {
+				...newpayload,
+				Payload: {
+					...newpayload.Payload,
+					NDTF: ndtfItems.slice(i, i + itemsPerChunk),
+					keys: ndtfKeys.slice(i, i + itemsPerChunk)
+				}
+			};
+
+			chunkNumber++;
+			const chunkSize = JSON.stringify(chunk).length;
+			console.log(`Sending chunk ${chunkNumber} of ${totalChunks}, items: ${chunk.Payload.NDTF.length}, size: ${chunkSize} bytes`);
+
+			// sanity check - if our estimate was off and chunk is still too big, warn but send anyway
+			if (chunkSize > maxSizeBytes) {
+				console.warn(`Chunk ${chunkNumber} exceeds target size (${chunkSize} bytes) - consider reducing maxSizeBytes or chunk size`);
+			}
+
+			this.sendSocketNotification("NEW_DATA", chunk);
+		}
+	},
 	processJSONitem: function (obj, itemfield, moduleinstance) {
 
 		//add a check if needed to see if matching is required to process this item
