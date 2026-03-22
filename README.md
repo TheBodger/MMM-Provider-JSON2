@@ -47,7 +47,7 @@ config:
 
 ### Configuration Options
 
-Nore: #some option may not be active in this version of the module.
+Note: #these options may not be available in this version of the module.
 
 | Option                  | Details
 |------------------------ |--------------
@@ -56,7 +56,7 @@ Nore: #some option may not be active in this version of the module.
 | `id`         | *Required* - The unique ID of this provider module<br><br> **Possible values:** any unique string<br> **Default value:** none
 | `datarefreshinterval`         | *Optional* - The time in seconds between each pull of the JSON data<br><br> **Possible values:** any valid number of seconds<br> **Default value:** 60000
 | `payloadType`         | *Optional* - The format of the output type<br><br> **Possible values:** "NDTF" or "RSS"<br> **Default value:** "NDTF"
-| `showDOM`         | *Optional* - Show the output data on the MM display. Postion must be included in the module config<br><br> **Possible values:** true or false<br> **Default value:** false
+| `showDOM`         | *Optional* - Show the output data on the MM display. Position must be included in the module config<br><br> **Possible values:** true or false<br> **Default value:** false
 | `#oldestAge`         | *Optional* - If entered, any data as defined by the timestamp field, older than this value in milliseconds will be ignored.<br><br> **Possible values:** null, or any valid number of milliseconds<br> **Default value:** null
 | `#youngestAge`         | *Optional* - If entered, any data as defined by the timestamp field, younger than this value in milliseconds will be ignored.<br><br> **Possible values:** null, or any valid number of milliseconds<br> **Default value:** null
 | `#Dedup`         | *Optional* - Does'nt send duplicate data.<br><br> **Possible values:** true or false<br> **Default value:** false
@@ -66,7 +66,7 @@ Nore: #some option may not be active in this version of the module.
 | `jsonSource`         | *Required* - List of JSON Sources to pull and process and pass on.<br><br> **Possible values:** a list of jsonSources<br> **Default value:** none
 |		`jsonSource` fields| Details:<br><br>
 | `sourceName`         | *Optional* - A name to identify the output to other modules.<br><br> **Possible values:** null or any unique value<br> **Default value:** the module name and a counter in order of the jsonSources
-| `usePagination`         | *Optional* - If the address (url or filename) of the data to pull contains a pagination value (i.e. batch#).<br><br> **Possible values:** true or false<br> **Default value:** false
+| `usePagination`         | *Optional* - If the address (url or filename) of the data to pull contains a pagination value (i.e. batch number).<br><br> **Possible values:** true or false<br> **Default value:** false
 | `paginationStart`         | *Optional* - The first value to use and increment from.<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
 | `paginationInc`         | *Optional* - How much to increment the pagination value each time a succesful pull occurs .<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
 | `paginationRepl`         | *Optional* - The string embedded in the address to replace with the pagination value.<br><br> **Possible values:** any value delimited with %<br> **Default value:** %pag%
@@ -77,41 +77,41 @@ Nore: #some option may not be active in this version of the module.
 | `OAUTH2_ID`         | *Required for OAUTH2 only* - The oauth2 id provided by the api provider<br><br> **Possible values:** a valid OAUTH2 id<br> **Default value:** none
 | `OAUTH2_Secret`         | *Required for OAUTH2 only* - The oauth2 secret provided by the api provider<br><br> **Possible values:** a valid OAUTH2 secret<br> **Default value:** none
 | `OAUTH2_URL`         | *Required for OAUTH2 only* - The oauth2 url fully formed to obtain the bearer token<br><br> **Possible values:** a valid OAUTH2 url<br> **Default value:** none
-| `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** a list of one or more of these values {}<br> **Default value:** {} (i.e. empty)
+| `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** one or more of these values {}<br> **Default value:** {} (i.e. empty)
 | `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
-| `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"   
+| `autoFileFormat`        | *Optional* - A date format that defines how often the JSONsource url should be pulled. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"   
 | |	YYYYMMDD, daily pull 
 | | #hhmmss (hours, minutes or seconds)
 | | #fff for fractions of seconds
 |	|	fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
-|	|	autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json for YYYYMMDD format on 1st October 2023, or MMM-Provider-JSON2_153000.json for hhmmss format at 3pm and 30 minutes. 
+|	|	autofilename is sourcename_jsonsourceindex_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_0_20231001.json for YYYYMMDD format on 1st October 2023, or MMM-Provider-JSON2_1_153000.json for hhmmss format at 3pm and 30 minutes. 
 | |
 | `itemfields `| *Required* - A single defintion of the input/output field processing within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
 | `useSubjectKey `| *Optional* - If true, the field defined as the subject will be filled with json data, otherwise the value below will be used<br><br> **Possible values:** true or false<br> **Default value:** false
 | `fieldsNullable `| *Optional* - If false, any field containing a null will cause the record to be ignored <br><br> **Possible values:** true or false<br> **Default value:** false
 | `root `| *Optional* - A Json level definition indicating where all subsequent field definitions should start at<br><br> **Possible values:** any json level definition<br> **Default value:** ""
 | `type `| *Optional* - the type of Json data to process below the root<br><br> **Possible values:** "array" or any other value<br> **Default value:** "array"
-| `subject `| *Required* - The value for the Subject field, or a JSON field definition if useSubjectKey is true <br><br> **Possible values:** "subject name" or json field definition"<br> **Default value:** none
-| `value `| *Required* - The JSON field definition for the value <br><br> **Possible values:** json field definition"<br> **Default value:** none
-| `object `| *Required* - The JSON field definition for the object <br><br> **Possible values:** json field definition"<br> **Default value:** none
+| `subject `| *Required* - The value for the Subject field, or a JSON field definition if useSubjectKey is true <br><br> **Possible values:** "subject name" or json field definition<br> **Default value:** none
+| `value `| *Required* - The JSON field definition for the value <br><br> **Possible values:** json field definition<br> **Default value:** none
+| `object `| *Required* - The JSON field definition for the object <br><br> **Possible values:** json field definition<br> **Default value:** none
 | `timestamp `| *Optional* - The JSON field definition for the timestamp <br><br> **Possible values:** json field definition<br> **Default value:** the current time and date
 | `useMatchKey `| *Optional* - If true, a field can be matched with a hardcoded value, if matching then that data will be included<br><br> **Possible values:** true or false<br> **Default value:** false
 | `matchKey `| *Required if useMatchKey true* - A json field definition within the incoming json record<br><br> **Possible values:** A valid JSON defintion<br> **Default value:** none
-| `matchValue `| *Required if useMatchKey true* - A hardcoded value to match with the defined fields<br><br> **Possible values:** Any string<br> **Default value:** none
+| `matchValue `| *Required if useMatchKey true* - A hardcoded value to match with the values in the field named matchKey<br><br> **Possible values:** Any string<br> **Default value:** none
 
 
 ### pagination support
 
-The pagination currently only supports apis that will return an HTTP status code of 404 if the number of the page passed to it doesnt exist and have sequential page numbers. Any other error will trigger a failure of that specific process. Other APIs may return the the number of addiional pages available in the set, or a starting offset and number of item left. these are not supported yet.
+The pagination currently only supports apis that will return an HTTP status code of 404 if the number of the page passed to it doesnt exist and have sequential page numbers. Any other error will trigger a failure of that specific process. Other APIs may return the number of additional pages available in the set, or a starting offset and number of items left. These are not supported yet.
 
 ### JSON field definitions
 
 The processor will determine the contents of a JSON Field by using the defintion with the following options:
 
 1) base dot notification, i.e. data.rolls.manager would look for the value in the incoming JSON data at data, then rolls within that, then manager within that and return the value of that field. 
-2) Single Array entry definition, i.e. person.rolls.1.sklls would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists
-3a) All entries (match key only) i.e. person.rolls.*.skills when processing the array of data.rolls, for all entries there will be a person and one or more skills, and one or more years with that skill  if the match key is looking for a skill of manager, then a succesful match and offset in the array will be returned for that match.
-3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of data.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If not matches are made then that manager wont be included
+2) Single Array entry definition, i.e. person.rolls.1.sklls would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists<br>
+3a) All entries (match key only) i.e. person.rolls.*.skills when processing the array of data.rolls, for all entries there will be a person and one or more skills, and one or more years with that skill  if the match key is looking for a skill of manager, then a succesful match and offset in the array will be returned for that match.<br>
+3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of data.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If not matches are made then that manager wont be included<br>
 
 ### Example configuration
 
