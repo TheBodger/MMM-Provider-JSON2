@@ -54,7 +54,7 @@ Note: #these options may not be available in this version of the module.
 | `text`                	| *Optional* - <br><br> **Possible values:** Any string.<br> **Default value:** The Module name
 | `consumerids`            | *Required* - a list of 1 or more consumer modules this module will provide for.<br><br> **Possible values:** An array of strings exactly matching the IDs of one or more consuming modules <br> **Default value:** none
 | `id`         | *Required* - The unique ID of this provider module<br><br> **Possible values:** any unique string<br> **Default value:** none
-| `datarefreshinterval`         | *Optional* - The time in seconds between each pull of the JSON data<br><br> **Possible values:** any valid number of seconds<br> **Default value:** 60000
+| `datarefreshinterval`         | *Optional* - The time in milliseconds between each pull of the JSON data<br><br> **Possible values:** any valid number of seconds<br> **Default value:** 60000
 | `payloadType`         | *Optional* - The format of the output type<br><br> **Possible values:** "NDTF" or "RSS"<br> **Default value:** "NDTF"
 | `showDOM`         | *Optional* - Show the output data on the MM display. Position must be included in the module config<br><br> **Possible values:** true or false<br> **Default value:** false
 | `#oldestAge`         | *Optional* - If entered, any data as defined by the timestamp field, older than this value in milliseconds will be ignored.<br><br> **Possible values:** null, or any valid number of milliseconds<br> **Default value:** null
@@ -109,15 +109,15 @@ The pagination currently only supports apis that will return an HTTP status code
 The processor will determine the contents of a JSON Field by using the defintion with the following options:
 
 1) base dot notification, i.e. data.rolls.manager would look for the value in the incoming JSON data at data, then rolls within that, then manager within that and return the value of that field. 
-2) Single Array entry definition, i.e. person.rolls.1.sklls would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists<br>
+2) Single Array entry definition, i.e. person.rolls.1.skills would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists<br>
 3a) All entries (match key only) i.e. person.rolls.*.skills when processing the array of data.rolls, for all entries there will be a person and one or more skills, and one or more years with that skill  if the match key is looking for a skill of manager, then a succesful match and offset in the array will be returned for that match.<br>
-3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of data.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If not matches are made then that manager wont be included<br>
+3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of data.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If no matches are made then that manager wont be included<br>
 
 ### Example configuration
 
-this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. The data is processed in a secondary step through module SQLengine to format it ready for displaying through consumer-display
+this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. The output data is passed through the module SQLengine to format it ready for displaying through consumer-display
 
-The complete config for the 3 modules is included in the download config.js.fuelFinder
+The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module.
 
 ```
 {
@@ -340,7 +340,7 @@ jsonSource:
 
 ### Additional Notes
 
-This is a WIP; changes are being made all the time to improve the compatibility across the modules. Please refresh this and the other modules noted above modules with a `git pull` in the relevant modules folders.
+This is a WIP; changes are being made all the time to improve the compatibility across the modules. Please refresh this and the other modules noted above, by using `git pull` in the relevant module's folder.
 
 The JSON input must be well formed and capable of being parsed with JSON.parse(). If there are errors generated whilst trying to parse the JSON, there are plenty of on-line tools that can be used to validate the feed and indicate where the issue may occur.
 
