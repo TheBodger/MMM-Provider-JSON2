@@ -370,7 +370,7 @@ module.exports = NodeHelper.create({
 
 						if (statusCode === 200 && JSONData !== null) {
 							// JSONData is an array [{...},{...}] - spread into accumulator
-							allPages.push(...JSONData);
+							if (usePagination) { allPages.push(...JSONData); }
 							// call update per page so display refreshes incrementally
 							self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost);
 						}

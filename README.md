@@ -153,7 +153,9 @@ The processor will determine the contents of a JSON Field by using the defintion
 
 ### Example configuration
 
-this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. 
+this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. The data is processed in a secondary step through module SQLengine to format it ready for displaying through consumer-display
+
+The complete config for the 3 modules is included in the download config.js.fuelFinder
 
 ```
 {
@@ -323,6 +325,54 @@ this configuration produces multiple NDTF feeds from the UK Government fuel pric
 					],
 			},
 		},
+
+```
+
+This example pulls data from a shares API and currency file previously loaded from an API. The feeds are later merged in sqlengine to produce a feed that shows the price of the shares in the local currency.
+
+The example config is included as exampleconfig.js in the module folder.
+
+```
+jsonSource:
+					[
+          {
+			      url: "https://query1.finance.yahoo.com/v8/finance/chart/TJX?range=5d&interval=1d&events=close", //very specific request to get the closing share price for TJX
+			      itemfields: [
+				      {
+					      "useSubjectKey": false,
+					      "root": "chart.result",
+					      "type": "array",
+					      "subject": "ShareClose",
+					      "object": "meta.symbol",
+					      "value": "indicators.quote.0.close", //note the .0 anywhere indicate the first entry in an array
+					      "timestamp": "timestamp", //note this may return an array which needs to be processed alongside any other items returned as array
+				      },
+			      ],
+			      file: "TJX.json", //this is a file that will be created for debug purposes, can also be input to this process
+
+			      sourceParams: {
+				      autoFileUse: true,
+			      },
+
+		      },
+
+		      {
+			      url: "file:///GBP.json", //this is a previously saved file from an API call to a currency exchange rate API, it is included to show alternative input types
+			      itemfields:
+			      [
+				      {
+					      "useSubjectKey": false,
+					      "root": "",
+					      "type": "",
+					      "subject": "GBExchange",
+					      "object": "source",
+					      "value": "quotes.USDGBP",
+					      "timestamp": "timestamp",
+				      },
+
+			      ],
+		      },
+        ],
 
 ```
 
