@@ -13,7 +13,7 @@ That output can then be utilised by other modules that support NDTF, for example
 
 ### Dependencies
 
-This module requires both MMM-Structures and MMM-Utilities to be installed. Please read their details for any further installation requirements.
+This module requires both MMM-Structures and MMM-Utilities to be installed. Please read their details in Github for any further installation requirements for each of those modules.
 
 
 ## Installation
@@ -21,7 +21,7 @@ To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
 2. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-Utilities`
 3. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-Structures`
-4. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-SQLEngine`
+4. Clone the module:<br />`git clone https://github.com/TheBodger/MMM-Provider-JSON2`
 
 ## Using the module
 
