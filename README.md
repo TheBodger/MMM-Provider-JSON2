@@ -52,38 +52,31 @@ Nore: #some option may not be active in this version of the module.
 | Option                  | Details
 |------------------------ |--------------
 | `text`                	| *Optional* - <br><br> **Possible values:** Any string.<br> **Default value:** The Module name
-| `consumerids`            | *Required* - a list of 1 or more consumer modules this module will provide for.<br><br> **Possible values:** An array of strings exactly matching the ID of one or more MMM-ChartDisplay modules <br> **Default value:** none
+| `consumerids`            | *Required* - a list of 1 or more consumer modules this module will provide for.<br><br> **Possible values:** An array of strings exactly matching the IDs of one or more consuming modules <br> **Default value:** none
 | `id`         | *Required* - The unique ID of this provider module<br><br> **Possible values:** any unique string<br> **Default value:** none
 | `datarefreshinterval`         | *Optional* - The time in seconds between each pull of the JSON data<br><br> **Possible values:** any valid number of seconds<br> **Default value:** 60000
 | `payloadType`         | *Optional* - The format of the output type<br><br> **Possible values:** "NDTF" or "RSS"<br> **Default value:** "NDTF"
 | `showDOM`         | *Optional* - Show the output data on the MM display. Postion must be included in the module config<br><br> **Possible values:** true or false<br> **Default value:** false
-
 | `#oldestAge`         | *Optional* - If entered, any data as defined by the timestamp field, older than this value in milliseconds will be ignored.<br><br> **Possible values:** null, or any valid number of milliseconds<br> **Default value:** null
 | `#youngestAge`         | *Optional* - If entered, any data as defined by the timestamp field, younger than this value in milliseconds will be ignored.<br><br> **Possible values:** null, or any valid number of milliseconds<br> **Default value:** null
 | `#Dedup`         | *Optional* - Does'nt send duplicate data.<br><br> **Possible values:** true or false<br> **Default value:** false
 | `#trackTimestamp`         | *Optional* - Use the timestamp of the data for processing.<br><br> **Possible values:** true or false<br> **Default value:** false
 | `#trackID`         | *Optional* - Create HASH value to track data.<br><br> **Possible values:** true or false<br> **Default value:** false
 | `#trackField`         | *Optional* - List of Data to track as a json field.<br><br> **Possible values:** a list of fields<br> **Default value:** []
-
 | `jsonSource`         | *Required* - List of JSON Sources to pull and process and pass on.<br><br> **Possible values:** a list of jsonSources<br> **Default value:** none
-
 |		`jsonSource` fields| Details:<br><br>
-
 | `sourceName`         | *Optional* - A name to identify the output to other modules.<br><br> **Possible values:** null or any unique value<br> **Default value:** the module name and a counter in order of the jsonSources
 | `usePagination`         | *Optional* - If the address (url or filename) of the data to pull contains a pagination value (i.e. batch#).<br><br> **Possible values:** true or false<br> **Default value:** false
 | `paginationStart`         | *Optional* - The first value to use and increment from.<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
 | `paginationInc`         | *Optional* - How much to increment the pagination value each time a succesful pull occurs .<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
 | `paginationRepl`         | *Optional* - The string embedded in the address to replace with the pagination value.<br><br> **Possible values:** any value delimited with %<br> **Default value:** %pag%
 | `url`         | *Required* - The address of this source. Either http:// or https:// or file:///.<br><br> **Possible values:** any valid address starting with the allowed data types<br> **Default value:** none
-
-| `file`         | *Optional* - If entered, the raw JSON data pulled will be written to this file. Can be used as input or debug purposes.<br><br> **Possible values:** any valid filename in format (./path/subpath/)filename.extension<br> **Default value:** null
-		
+| `file`         | *Optional* - If entered, the raw JSON data pulled will be written to this file. Can be used as input or debug purposes.<br><br> **Possible values:** any valid filename in format (./path/subpath/)filename.extension<br> **Default value:** null		
 | `OAuth2 options – per source`| Details:
 | `OAUTH2_Required`         | *Optional* - If true, OAUTH validation will be attempted with the following fields, all are required.<br><br> **Possible values:** true or false<br> **Default value:** false
 | `OAUTH2_ID`         | *Required for OAUTH2 only* - The oauth2 id provided by the api provider<br><br> **Possible values:** a valid OAUTH2 id<br> **Default value:** none
 | `OAUTH2_Secret`         | *Required for OAUTH2 only* - The oauth2 secret provided by the api provider<br><br> **Possible values:** a valid OAUTH2 secret<br> **Default value:** none
 | `OAUTH2_URL`         | *Required for OAUTH2 only* - The oauth2 url fully formed to obtain the bearer token<br><br> **Possible values:** a valid OAUTH2 url<br> **Default value:** none
-
 | `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** a list of one or more of these values {}<br> **Default value:** {} (i.e. empty)
 | `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
 | `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"
@@ -97,16 +90,12 @@ Nore: #some option may not be active in this version of the module.
 | `itemfields `| *Required* - A single defintion of the input/output field processing within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
 | `useSubjectKey `| *Optional* - If true, the field defined as the subject will be filled with json data, otherwise the value below will be used<br><br> **Possible values:** true or false<br> **Default value:** false
 | `fieldsNullable `| *Optional* - If false, any field containing a null will cause the record to be ignored <br><br> **Possible values:** true or false<br> **Default value:** false
-
 | `root `| *Optional* - A Json level definition indicating where all subsequent field definitions should start at<br><br> **Possible values:** any json level definition<br> **Default value:** ""
 | `type `| *Optional* - the type of Json data to process below the root<br><br> **Possible values:** "array" or any other value<br> **Default value:** "array"
-
 | `subject `| *Required* - The value for the Subject field, or a JSON field definition if useSubjectKey is true <br><br> **Possible values:** "subject name" or json field definition"<br> **Default value:** none
 | `value `| *Required* - The JSON field definition for the value <br><br> **Possible values:** json field definition"<br> **Default value:** none
 | `object `| *Required* - The JSON field definition for the object <br><br> **Possible values:** json field definition"<br> **Default value:** none
 | `timestamp `| *Optional* - The JSON field definition for the timestamp <br><br> **Possible values:** json field definition<br> **Default value:** the current time and date
-
-
 | `useMatchKey `| *Optional* - If true, a field can be matched with a hardcoded value, if matching then that data will be included<br><br> **Possible values:** true or false<br> **Default value:** false
 | `matchKey `| *Required if useMatchKey true* - A json field definition within the incoming json record<br><br> **Possible values:** A valid JSON defintion<br> **Default value:** none
 | `matchValue `| *Required if useMatchKey true* - A hardcoded value to match with the defined fields<br><br> **Possible values:** Any string<br> **Default value:** none
