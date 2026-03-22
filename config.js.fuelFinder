@@ -1,0 +1,260 @@
+
+		//example json 2 get the fuel price details from GOV.UK,
+		// Note the url needs to be formed with the API key as defined at: https://www.gov.uk/guidance/access-the-latest-fuel-prices-and-forecourt-data-via-api-or-email
+		// note the dot notation used in the itemfields to indicate the root, and then within that object, the fields to use
+		//.0 indicated take first entry in a json array
+		//.? indicated use the pagination counter
+		//.* indicated search all of the entries in the array for a match to the matchKey and if found use the value from that entry as defined in the value field
+		{
+			module: "MMM-Provider-JSON2",
+			//position: "top_left",
+			config:
+			{
+				text: "MMM-Provider-JSON2",
+				consumerids: ["MMSE1"],
+				id: "MMJP21",
+				showDOM: false,
+				datarefreshinterval: 1000 * 60 * 60 * 24, //daily
+				payloadType: "NDTF",
+
+				jsonSource:
+					[
+						//test -- petrol API URLs - note OAUTH details are different to production
+
+						//{
+						//	url: "https://stg.fuel-finder.ics.gov.uk/api/v1/pfs/fuel-prices?batch-number=1", //free currency exchange service
+						//	OAUTH2_Required: true,
+						//	OAUTH2_URL: "https://stg.fuel-finder.ics.gov.uk/api/v1/oauth/generate_access_token",
+						//	OAUTH2_ID: "test id",
+						//	OAUTH2_Secret: "test secret",
+
+						//production
+
+						{
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
+							OAUTH2_Required: true,
+							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
+							OAUTH2_ID: "your-Oauth-id",
+							OAUTH2_Secret: "your-Oauth-secret",
+							itemfields:
+								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": false,
+										"matchKey": "",
+										"matchValue": "",
+										"root": "",
+										"type": "array",
+										"subject": "Station_Postcodes",
+										"object": "node_id",
+										"value": "location.postcode",
+									},
+								],
+							file: "",
+							usePagination: true,
+							sourceParams: {
+								autoFileUse: true,
+							},
+						},
+						{
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
+							OAUTH2_Required: true,
+							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
+							OAUTH2_ID: "your-Oauth-id",
+							OAUTH2_Secret: "your-Oauth-secret",
+							itemfields:
+								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": false,
+										"matchKey": "",
+										"matchValue": "",
+										"root": "",
+										"type": "array",
+										"subject": "Station_Address",
+										"object": "node_id",
+										"value": "location.address_line_1",
+									},
+								],
+		
+							usePagination: true,
+							sourceParams: {
+								autoFileUse: true,
+							},
+						},
+						{
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
+							OAUTH2_Required: true,
+							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
+							OAUTH2_ID: "your-Oauth-id",
+							OAUTH2_Secret: "your-Oauth-secret",
+							itemfields:
+								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": false,
+										"matchKey": "",
+										"matchValue": "",
+										"root": "",
+										"type": "array",
+										"subject": "Station_City",
+										"object": "node_id",
+										"value": "location.city",
+									},
+								],
+							file: "",
+							usePagination: true,
+							sourceParams: {
+								autoFileUse: true,
+							},
+						},
+
+						{
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
+							OAUTH2_Required: true,
+							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
+							OAUTH2_ID: "your-Oauth-id",
+							OAUTH2_Secret: "your-Oauth-secret",
+							itemfields:
+								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": true,
+										"matchKey": "fuel_prices.*.fuel_type", //note use of *, means search all of these values
+										"matchValue": "E10",
+										"root": "",
+										"type": "array",
+										"subject": "E10_Prices",
+										"object": "node_id",
+										"value": "fuel_prices.?.price", //note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+									},
+								],
+		
+							usePagination: true,
+							sourceParams: {
+								autoFileUse: true,
+							},
+						},
+
+						{
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
+							OAUTH2_Required: true,
+							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
+							OAUTH2_ID: "your-Oauth-id",
+							OAUTH2_Secret: "your-Oauth-secret",
+							itemfields:
+								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": true,
+										"matchKey": "fuel_prices.*.fuel_type", //note use of *, means search all of these values
+										"matchValue": "B7_STANDARD",
+										"root": "",
+										"type": "array",
+										"subject": "Diesel_Prices",
+										"object": "node_id",
+										"value": "fuel_prices.?.price", //note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+									},
+								],
+		
+							usePagination: true,
+							sourceParams: {
+								autoFileUse: true,
+							},
+						}, 
+					],
+			},
+		},
+		
+		{
+			module: "MMM-SQLEngine",
+			config:
+			{
+				text: "MMM-SQLEngine",
+				id: "MMSE1",
+				consumerids: ["MMFD2"],
+				showDOM: false,
+				sqlParams: {
+
+					sqlUseDB: true, 
+					sqlDB: "C:\\temp\\mySQLLiteDB.db", //note this is preloaded from OS data, Node project included for example
+					sqlDBName: "myDB",
+
+					//query will show the name and firstline of address, the distance in km and the standard fuel : diesel price.Attempt to be in price order cheapest first
+
+					sqlQuery: "SELECT " +
+						"    d_addr.value ||','|| d_city.value                               AS subject, " +
+						"    '£'||ROUND(CAST(d_price.value AS REAL) / 100, 3)||' : ' || '£'||ROUND(CAST(e_price.value AS REAL) / 100, 3) AS value, " +
+						"    ROUND( " +
+						"        SQRT( " +
+						"            (CAST(a_station.easting  AS REAL) - CAST(a_centre.easting  AS REAL)) * " +
+						"            (CAST(a_station.easting  AS REAL) - CAST(a_centre.easting  AS REAL)) + " +
+						"            (CAST(a_station.northing AS REAL) - CAST(a_centre.northing AS REAL)) * " +
+						"            (CAST(a_station.northing AS REAL) - CAST(a_centre.northing AS REAL)) " +
+						"        ) / 1000.0, " +
+						"        2 " +
+						"    ) ||'Km'                                                               AS object " +
+
+						"FROM " +
+						"    data d_price, data e_price" +
+						"    JOIN data d_pc      ON d_pc.object    = d_price.object AND d_pc.subject    = 'Station_Postcodes' " +
+						"    JOIN data d_addr    ON d_addr.object  = d_price.object AND d_addr.subject  = 'Station_Address' " +
+						"    JOIN data d_city    ON d_city.object  = d_price.object AND d_city.subject  = 'Station_City' " +
+						"    JOIN myDB.postcodes a_station ON a_station.postcode = d_pc.value " +
+						"    JOIN myDB.postcodes a_centre  ON a_centre.postcode  = 'SL5 8EF' " +
+						"WHERE " +
+						"    d_price.subject = 'E10_Prices' and e_price.subject = 'Diesel_Prices'  " +
+						"    AND d_price.object = e_price.object " + 
+						"    AND CAST(d_price.value AS REAL) < 145 " +
+						"    AND ( " +
+						"        (CAST(a_station.easting  AS REAL) - CAST(a_centre.easting  AS REAL)) * " +
+						"        (CAST(a_station.easting  AS REAL) - CAST(a_centre.easting  AS REAL)) + " +
+						"        (CAST(a_station.northing AS REAL) - CAST(a_centre.northing AS REAL)) * " +
+						"        (CAST(a_station.northing AS REAL) - CAST(a_centre.northing AS REAL)) " +
+						"    ) <= (15 * 1000.0) * (15 * 1000.0) " +
+						"ORDER BY " +
+						"    CAST(d_price.value AS REAL) ASC;" ,
+
+				},
+				outputType: "RSS",
+				RSSTitle: "Fuel Prices",
+
+			},
+		},
+
+		{
+			module: "MMM-Consumer-Display",
+			position: "top_right",
+			config: {
+				id: "MMFD2",
+				text: "Fuel Prices",
+				article: {
+					mergetype: 'merge',
+					ordertype: 'age',
+				},
+				display: {
+					articleage: true,
+					articlecount: 44,
+					articlesize: 'xsmall',
+					modulewidth: "18vw",
+					articledescription: true,
+					articletitle: true,
+					articleimage: true,
+					articlevideo: false,
+					sourcenamelength: 20,
+					feedtitle: true,
+					firstfulltext: true,
+					refreshtime: 20000,
+					formatstyle: 'lightbox',
+					textbelowimage: true,
+				},
+			},
+		},
+
