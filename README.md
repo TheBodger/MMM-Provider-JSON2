@@ -3,7 +3,7 @@
 version 2 of the MMM-Provider-JSON module for MagicMirror²
 modelled after the MMM-Provider-JSON module 
 
-This module will pull JSON formatted data from web based APIs, or local files previously loaded. It supports standard OUATH2 authentication for web based APIs. Data is formatted into either RSS or NDTF format; NDTF simplifies data to the lowest level, based on a Subject, an Object within that subject and a value. A timestamp is also included (i.e. Country populations, uk, 68123678, 2025-05-01 00:00:00).
+This module will pull JSON formatted data from web based APIs, or local files (that may have been previously downloaded using this module). It supports standard OUATH2 authentication for web based APIs. Data is formatted into either RSS or NDTF format; NDTF simplifies data to the lowest level, based on a Subject, an Object within that subject and a value. A timestamp is also included (i.e. Country populations, uk, 68123678, 2025-05-01 00:00:00).
 
 That output can then be utilised by other modules that support NDTF, for example MMM-SQLEngine and MMM-Consumer-Display. Further details and examples can be found below.
 
