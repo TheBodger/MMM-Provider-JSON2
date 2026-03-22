@@ -69,30 +69,30 @@ Nore: #some option may not be active in this version of the module.
 
 |		`jsonSource` fields| Details:<br><br>
 
-  | `sourceName`         | *Optional* - A name to identify the output to other modules.<br><br> **Possible values:** null or any unique value<br> **Default value:** the module name and a counter in order of the jsonSources
-	| `usePagination`         | *Optional* - If the address (url or filename) of the data to pull contains a pagination value (i.e. batch#).<br><br> **Possible values:** true or false<br> **Default value:** false
-  | `paginationStart`         | *Optional* - The first value to use and increment from.<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
-  | `paginationInc`         | *Optional* - How much to increment the pagination value each time a succesful pull occurs .<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
-  | `paginationRepl`         | *Optional* - The string embedded in the address to replace with the pagination value.<br><br> **Possible values:** any value delimited with %<br> **Default value:** %pag%
-  | `url`         | *Required* - The address of this source. Either http:// or https:// or file:///.<br><br> **Possible values:** any valid address starting with the allowed data types<br> **Default value:** none
+| `sourceName`         | *Optional* - A name to identify the output to other modules.<br><br> **Possible values:** null or any unique value<br> **Default value:** the module name and a counter in order of the jsonSources
+| `usePagination`         | *Optional* - If the address (url or filename) of the data to pull contains a pagination value (i.e. batch#).<br><br> **Possible values:** true or false<br> **Default value:** false
+| `paginationStart`         | *Optional* - The first value to use and increment from.<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
+| `paginationInc`         | *Optional* - How much to increment the pagination value each time a succesful pull occurs .<br><br> **Possible values:** A valid numeric value<br> **Default value:** 1
+| `paginationRepl`         | *Optional* - The string embedded in the address to replace with the pagination value.<br><br> **Possible values:** any value delimited with %<br> **Default value:** %pag%
+| `url`         | *Required* - The address of this source. Either http:// or https:// or file:///.<br><br> **Possible values:** any valid address starting with the allowed data types<br> **Default value:** none
 
-  | `file`         | *Optional* - If entered, the raw JSON data pulled will be written to this file. Can be used as input or debug purposes.<br><br> **Possible values:** any valid filename in format (./path/subpath/)filename.extension<br> **Default value:** null
+| `file`         | *Optional* - If entered, the raw JSON data pulled will be written to this file. Can be used as input or debug purposes.<br><br> **Possible values:** any valid filename in format (./path/subpath/)filename.extension<br> **Default value:** null
 		
-	| `OAuth2 options – per source`| Details:
-  | `OAUTH2_Required`         | *Optional* - If true, OAUTH validation will be attempted with the following fields, all are required.<br><br> **Possible values:** true or false<br> **Default value:** false
-  | `OAUTH2_ID`         | *Required for OAUTH2 only* - The oauth2 id provided by the api provider<br><br> **Possible values:** a valid OAUTH2 id<br> **Default value:** none
-  | `OAUTH2_Secret`         | *Required for OAUTH2 only* - The oauth2 secret provided by the api provider<br><br> **Possible values:** a valid OAUTH2 secret<br> **Default value:** none
-  | `OAUTH2_URL`         | *Required for OAUTH2 only* - The oauth2 url fully formed to obtain the bearer token<br><br> **Possible values:** a valid OAUTH2 url<br> **Default value:** none
+| `OAuth2 options – per source`| Details:
+| `OAUTH2_Required`         | *Optional* - If true, OAUTH validation will be attempted with the following fields, all are required.<br><br> **Possible values:** true or false<br> **Default value:** false
+| `OAUTH2_ID`         | *Required for OAUTH2 only* - The oauth2 id provided by the api provider<br><br> **Possible values:** a valid OAUTH2 id<br> **Default value:** none
+| `OAUTH2_Secret`         | *Required for OAUTH2 only* - The oauth2 secret provided by the api provider<br><br> **Possible values:** a valid OAUTH2 secret<br> **Default value:** none
+| `OAUTH2_URL`         | *Required for OAUTH2 only* - The oauth2 url fully formed to obtain the bearer token<br><br> **Possible values:** a valid OAUTH2 url<br> **Default value:** none
 
-  | `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** a list of one or more of these values {}<br> **Default value:** {} (i.e. empty)
-  | `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
-  | `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"
+| `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** a list of one or more of these values {}<br> **Default value:** {} (i.e. empty)
+| `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
+| `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"
       
-		YYYYMMDD, daily pull
-    #hhmmss (hours, minutes or seconds)
-    #fff for fractions of seconds
-			//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
-			//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
+	YYYYMMDD, daily pull
+  #hhmmss (hours, minutes or seconds)
+  #fff for fractions of seconds
+		//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
+		//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
 
 | `itemfields `| *Required* - A single defintion of the input/output field processing within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
 | `useSubjectKey `| *Optional* - If true, the field defined as the subject will be filled with json data, otherwise the value below will be used<br><br> **Possible values:** true or false<br> **Default value:** false
