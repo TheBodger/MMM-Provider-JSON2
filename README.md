@@ -28,32 +28,6 @@ To install the module, use your terminal to:
 
 ### MagicMirror² Configuration
 
-		jsonSource:
-		[
-			{
-			sourceName: null, // default is the module name and a counter in order of the jsonSources, if present must be unique within the system
-			sourceParams: {
-				autoFileUse: false, // true/false – use the provided date / time format to determine if a API pull is required
-				autoFileFormat: "YYYYMMDD", // – the date format to use for the auto file name, default is YYYYMMDD i.e. daily pull. also hhmmss and even fff for fractions of seconds
-				//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
-				//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
-			},
-			usePagination: false, // true/false – use pagination to retrieve the data, only applicable if url is provided and the source is an API that supports pagination somewhere in the url
-			paginationStart: 1, // the starting page for pagination, default is 1
-			paginationInc: 1, // the increment for pagination, default is 1
-			paginationRepl: "%pag%", // the string to look for in the url to replace with the page number for pagination, default is %pag%"
-			_currentPag: 1, // the current page for pagination, default is 1, this will be updated as we paginate through the data
-			url: "", //formatted as http:// or https:// or file:///
-			itemfields: [],
-			file: null,             // | No | the filename to write the payload to for debug etc purposes | any valid file name | none
-			// OAuth2 options – per source; only applied when OAUTH2_Required is true for this source
-			OAUTH2_Required: false, // true/false – enable OAuth2 authentication for this specific source
-			OAUTH2_ID: "",          // OAuth2 client_id for this source
-			OAUTH2_Secret: "",      // OAuth2 client_secret for this source
-			OAUTH2_URL: "",         // URL to POST credentials to in order to retrieve a token for this source
-			}
-		],
-
 To use this module, add the following minimum configuration block to the modules array in the `config/config.js` file:
 ```js
 
@@ -64,9 +38,9 @@ config:
   	consumerids:['consumerid of MMM-Provider-JSON2 output'],
   	id:'unique id of this module instance',
     		jsonSource:
-		[
-    ....enter at least one json source configuration block here, see details below for the jsonSource configuration options
-    ]
+		      [
+          ....enter at least one json source configuration block here, see details below for the jsonSource configuration options
+          ]
 	}
 },
 ```
