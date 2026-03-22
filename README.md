@@ -79,14 +79,13 @@ Nore: #some option may not be active in this version of the module.
 | `OAUTH2_URL`         | *Required for OAUTH2 only* - The oauth2 url fully formed to obtain the bearer token<br><br> **Possible values:** a valid OAUTH2 url<br> **Default value:** none
 | `sourceParams`         | *Optional* - Additional options for this source<br><br> **Possible values:** a list of one or more of these values {}<br> **Default value:** {} (i.e. empty)
 | `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
-| `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"
-      
-	YYYYMMDD, daily pull
-  #hhmmss (hours, minutes or seconds)
-  #fff for fractions of seconds
-		//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
-		//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
-
+| `autoFileFormat`        | *Optional* - A date format that defines how often the underlying API should be called. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"   
+| |	YYYYMMDD, daily pull 
+| | #hhmmss (hours, minutes or seconds)
+| | #fff for fractions of seconds
+|	|	fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
+|	|	autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json for YYYYMMDD format on 1st October 2023, or MMM-Provider-JSON2_153000.json for hhmmss format at 3pm and 30 minutes. 
+|
 | `itemfields `| *Required* - A single defintion of the input/output field processing within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
 | `useSubjectKey `| *Optional* - If true, the field defined as the subject will be filled with json data, otherwise the value below will be used<br><br> **Possible values:** true or false<br> **Default value:** false
 | `fieldsNullable `| *Optional* - If false, any field containing a null will cause the record to be ignored <br><br> **Possible values:** true or false<br> **Default value:** false
