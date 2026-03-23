@@ -184,7 +184,7 @@
 				sqlParams: {
 
 					sqlUseDB: true, 
-					sqlDB: "C:\\temp\\mySQLLiteDB.db", //note this is preloaded from OS data, Node project included for example
+					sqlDB: "C:\\temp\\mySQLLiteDB.db", //note this is preloaded from OS data using a separate Nodejs project, details in the readme.md notes.
 					sqlDBName: "myDB",
 
 					//query will show the name and firstline of address, the distance in km and the standard fuel : diesel price.Attempt to be in price order cheapest first

@@ -117,7 +117,7 @@ The processor will determine the contents of a JSON Field by using the defintion
 
 this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. The output data is passed through the module SQLengine to format it ready for displaying through consumer-display
 
-The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module.
+The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module. It requires an external SQLIte database populated with postcode data. this project can be used to create and load the required table from ordance survey postcode data. https://github.com/TheBodger/SQLLitePostcodes
 
 ```
 {
