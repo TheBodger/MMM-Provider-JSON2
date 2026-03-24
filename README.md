@@ -105,7 +105,7 @@ The pagination currently only supports APIs that have sequential page numbers an
 
 ### JSON field definitions
 
-The processor will determine the contents of a JSON Field by using the defintion with the following options:
+The processor will determine the contents of a JSON Field by using the definition with the following options:
 
 1) base dot notification, i.e. person.rolls.manager would look for the value in the incoming JSON data at person, then rolls within that, then manager within that and return the value of that field. 
 2) Single Array entry definition, i.e. person.rolls.1.skills would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists<br>
