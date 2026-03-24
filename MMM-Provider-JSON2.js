@@ -53,7 +53,7 @@ Module.register("MMM-Provider-JSON2", {
 				autoFileUse: false, // true/false – use the provided date / time format to determine if a API pull is required
 				autoFileFormat: "YYYYMMDD", // – the date format to use for the auto file name, default is YYYYMMDD i.e. daily pull. also hhmmss and even fff for fractions of seconds
 				//fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
-				//autofilename is sourcename_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_20231001.json
+				//autofilename is moduleidentifier.json converted to the actual date/time value i.e. MMM-Provider-JSON2_1_0_20231001.json
 			},
 			usePagination: false, // true/false – use pagination to retrieve the data, only applicable if url is provided and the source is an API that supports pagination somewhere in the url
 			paginationStart: 1, // the starting page for pagination, default is 1
@@ -101,7 +101,7 @@ Module.register("MMM-Provider-JSON2", {
 
 		this.config.jsonSource.forEach(source => {
 			if (!source.sourceName) {
-				source.sourceName = `${this.name}_${this.config.jsonSource.indexOf(source)}`;
+				source.sourceName = `${this.identifier}_${this.config.jsonSource.indexOf(source)}`;
 			}
 
 		})
@@ -188,7 +188,7 @@ Module.register("MMM-Provider-JSON2", {
 
 			var self = this
 
-			//send an in itail request to get the ball rolling
+			//send an in initial request to get the ball rolling
 
 			this.sendNotificationToNodeHelper("UPDATE", { moduleinstance: this.identifier });
 

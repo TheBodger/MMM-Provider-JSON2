@@ -80,8 +80,8 @@ Note: #these options may not be available in this version of the module.
 | `autoFileUse`         | *Optional* - If true, autofile processing will be applied to this source <br><br> **Possible values:** true or false<br> **Default value:** false
 | `autoFileFormat`        | *Optional* - A date format that defines how often the JSONsource url should be pulled. <br><br> **Possible values:** YYYYMMDD, hhmmss or fraction of seconds<br> **Default value:** ""YYYYMMDD"   
 | |	YYYYMMDD, daily pull 
-| | #hhmmss (hours, minutes or seconds)
-| | #fff for fractions of seconds
+| | hhmmss (hours, minutes or seconds)
+| | fff for fractions of seconds
 |	|	fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
 |	|	autofilename is sourcename_jsonsourceindex_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_0_20231001.json for YYYYMMDD format on 1st October 2023, or MMM-Provider-JSON2_1_153000.json for hhmmss format at 3pm and 30 minutes. 
 | |

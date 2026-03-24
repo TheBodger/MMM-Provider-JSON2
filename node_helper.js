@@ -197,7 +197,8 @@ module.exports = NodeHelper.create({
 
 		const self = this;
 
-		if (this.configurations.configuration[moduleinstance].jsonSource == null || this.configurations.configuration[moduleinstance].jsonSource.length == 0) { console.log("----> 2 this.configurations.configuration[moduleinstance].jsonSource"); };
+		if (this.configurations.configuration[moduleinstance].jsonSource == null || this.configurations.configuration[moduleinstance].jsonSource.length == 0)
+		{ console.log("----> 2 this.configurations.configuration[moduleinstance].jsonSource"); };
 
 		this.configurations.configuration[moduleinstance].jsonSource.forEach(function (jsonsource) {
 
