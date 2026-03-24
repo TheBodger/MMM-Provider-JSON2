@@ -60,6 +60,8 @@ module.exports = NodeHelper.create({
 
 		//if any of the jsonSources are written to file, clear them first
 
+		if (this.configurations.configuration[moduleinstance].jsonSource == null || this.configurations.configuration[moduleinstance].jsonSource.length == 0) { console.log("----> 1 this.configurations.configuration[moduleinstance].jsonSource"); };
+
 		this.configurations.configuration[moduleinstance].jsonSource.forEach(function (jsonsource) {
 
 			if (jsonsource.file && jsonsource.file != "") {
@@ -116,29 +118,29 @@ module.exports = NodeHelper.create({
 		return new Promise((resolve, reject) => {
 
 			const postBody = JSON.stringify({
-				client_id:     jsonsource.OAUTH2_ID,
+				client_id: jsonsource.OAUTH2_ID,
 				client_secret: jsonsource.OAUTH2_Secret
 			});
 
 			const oauthURL = new URL(jsonsource.OAUTH2_URL);
 			const useHttps = oauthURL.protocol === 'https:';
-			const agent    = useHttps ? https : http;
+			const agent = useHttps ? https : http;
 
 			const options = {
 				hostname: oauthURL.hostname,
-				port:     oauthURL.port || (useHttps ? 443 : 80),
-				path:     oauthURL.pathname + oauthURL.search,
-				method:   'POST',
+				port: oauthURL.port || (useHttps ? 443 : 80),
+				path: oauthURL.pathname + oauthURL.search,
+				method: 'POST',
 				headers: {
-					'Content-Type':    'application/json',
-					'Content-Length':  Buffer.byteLength(postBody),
-					'Accept':          'application/json',
+					'Content-Type': 'application/json',
+					'Content-Length': Buffer.byteLength(postBody),
+					'Accept': 'application/json',
 					'Accept-Language': 'en-GB,en;q=0.9,en-US;q=0.8',
-					'User-Agent':      'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0',
-					'Sec-Fetch-Site':  'none',
-					'Sec-Fetch-Mode':  'navigate',
-					'Sec-Fetch-Dest':  'document',
-					'Dnt':             '1'
+					'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36 Edg/137.0.0.0',
+					'Sec-Fetch-Site': 'none',
+					'Sec-Fetch-Mode': 'navigate',
+					'Sec-Fetch-Dest': 'document',
+					'Dnt': '1'
 				}
 			};
 
@@ -195,6 +197,8 @@ module.exports = NodeHelper.create({
 
 		const self = this;
 
+		if (this.configurations.configuration[moduleinstance].jsonSource == null || this.configurations.configuration[moduleinstance].jsonSource.length == 0) { console.log("----> 2 this.configurations.configuration[moduleinstance].jsonSource"); };
+
 		this.configurations.configuration[moduleinstance].jsonSource.forEach(function (jsonsource) {
 
 			// Each source manages its own token lifecycle
@@ -210,8 +214,8 @@ module.exports = NodeHelper.create({
 					console.error(self.name + ' OAuth2 error for source "' + jsonsource.sourceName + '": ' + err.message);
 					self.sendUpdate('OAUTH2_ERROR', {
 						moduleinstance: moduleinstance,
-						sourceName:     jsonsource.sourceName,
-						message:        err.message
+						sourceName: jsonsource.sourceName,
+						message: err.message
 					});
 				});
 
@@ -280,25 +284,28 @@ module.exports = NodeHelper.create({
 		// file reads without mutating the original config object.
 		// File reads are always a single read with no pagination - a file always returns
 		// 200 so the API non-200 exit condition would never fire, causing an infinite loop.
-		var agent;
-		var usePagination = jsonsource.usePagination; // preserve original config value
+		var agent = {};
+
+		var usePagination = {};  // preserve original config value
+		usePagination[moduleinstance] = jsonsource.usePagination;
+
 
 		if (URL.substring(0, 5) == 'file:') {
-			agent = new Utilities.file();
-			usePagination = false;        // files are always read exactly once
+			agent[moduleinstance] = new Utilities.file();
+			usePagination[moduleinstance] = false;        // files are always read exactly once
 			jsonsource._currentPag = 1;   // ensure the loop body executes at least once
 		}
 		else if (URL.substring(0, 6) == 'https:') {
-			agent = https;
+			agent[moduleinstance] = https;
 		}
 		else {
-			agent = http;
+			agent[moduleinstance] = http;
 		}
 
 		// Wrap the agent.get call in a promise so we can await it
 		const fetchPage = (workingURL, options) => {
 			return new Promise((resolve, reject) => {
-				agent.get(workingURL, options, res => {
+				agent[moduleinstance].get(workingURL, options, res => {
 					let sourceHost = res.client._host;
 					const headerDate = res.headers && res.headers.date ? res.headers.date : 'no response date';
 					console.log('Status Code:', res.statusCode + " " + workingURL);
@@ -352,7 +359,7 @@ module.exports = NodeHelper.create({
 
 				while (jsonsource._currentPag > 0) {
 					var workingURL = URL;
-					if (usePagination) {
+					if (usePagination[moduleinstance]) {
 						// Adjust the URL for the current page and increment for next time
 						workingURL = workingURL.replace(jsonsource.paginationRepl, jsonsource._currentPag);
 						jsonsource._currentPag = jsonsource._currentPag + jsonsource.paginationInc;
@@ -365,13 +372,14 @@ module.exports = NodeHelper.create({
 						// Exit condition: non-200 from API signals no more pages.
 						// Also exits immediately when usePagination is false (file reads,
 						// or sources configured without pagination).
-						if (statusCode !== 200 || !usePagination) {
+						if (statusCode !== 200 || !usePagination[moduleinstance]) {
 							jsonsource._currentPag = 0;
 						}
 
 						if (statusCode === 200 && JSONData !== null) {
 							// JSONData is an array [{...},{...}] - spread into accumulator
-							if (usePagination) { allPages.push(...JSONData); }
+							if (usePagination[moduleinstance]) { allPages.push(...JSONData); }
+							else { allPages.push(JSONData); }
 							// call update per page so display refreshes incrementally
 							self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost);
 						}
@@ -461,8 +469,7 @@ module.exports = NodeHelper.create({
 
 		//RSS
 
-		if (this.configurations.configuration[moduleinstance].payloadType == "RSS")
-		{
+		if (this.configurations.configuration[moduleinstance].payloadType == "RSS") {
 
 			var title = "Testing RSS Item";
 			var pubdate = new Date().toISOString();
@@ -491,10 +498,11 @@ module.exports = NodeHelper.create({
 
 		//NDTF
 
-		if (this.configurations.configuration[moduleinstance].payloadType == "NDTF")
-		{
+		if (this.configurations.configuration[moduleinstance].payloadType == "NDTF") {
 
 			this.payloads[moduleinstance].Payload.JSONsource = sourceURL;
+
+			if (itemfields == null || itemfields.length == 0) { console.log("----> itemfields"); };
 
 			itemfields.forEach(function (itemfield)
 			{
@@ -516,6 +524,10 @@ module.exports = NodeHelper.create({
 				}
 
 				if (itemfield.type == "array") {
+
+					if (JSONData == null || JSONData.length == 0) {
+						console.log("----> JSONData");
+					};
 					JSONData.forEach(function (obj) {
 
 						self.processJSONitem(obj, itemfield, moduleinstance);
