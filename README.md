@@ -124,8 +124,8 @@ The complete config for the 3 modules is included in config.js.fuelFinder downlo
 							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "Gt4aP83ippQiXkcfMU03EXyA7iAVpZXx",
-							OAUTH2_Secret: "GJOO83VwKaAKmzuIiHebviCXkfotSin8z6Xh7efbfBYeG8UDq5GBLTRUSTecHB1X",
+							OAUTH2_ID: "your_id",
+							OAUTH2_Secret: "your_secret",
 							itemfields:
 								[
 									{
@@ -175,8 +175,8 @@ The complete config for the 3 modules is included in config.js.fuelFinder downlo
 							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "Gt4aP83ippQiXkcfMU03EXyA7iAVpZXx",
-							OAUTH2_Secret: "GJOO83VwKaAKmzuIiHebviCXkfotSin8z6Xh7efbfBYeG8UDq5GBLTRUSTecHB1X",
+							OAUTH2_ID: "your_id",
+							OAUTH2_Secret: "your_secret",
 							itemfields:
 								[
 									{
