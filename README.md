@@ -15,7 +15,6 @@ That output can then be utilised by other modules that support NDTF, for example
 
 This module requires both MMM-Structures and MMM-Utilities to be installed. Please read their details in Github for any further installation requirements for each of those modules.
 
-
 ## Installation
 To install the module, use your terminal to:
 1. Navigate to your MagicMirror's modules folder. If you are using the default installation directory, use the command:<br />`cd ~/MagicMirror/modules`
@@ -102,22 +101,22 @@ Note: #these options may not be available in this version of the module.
 
 ### pagination support
 
-The pagination currently only supports apis that will return an HTTP status code of 404 if the number of the page passed to it doesnt exist and have sequential page numbers. Any other error will trigger a failure of that specific process. Other APIs may return the number of additional pages available in the set, or a starting offset and number of items left. These are not supported yet.
+The pagination currently only supports APIs that have sequential page numbers and will return an HTTP status code other than 200 if the number of the page passed to it doesnt exist. Any other error will trigger a failure of that specific process. Other APIs may return the number of additional pages available in the set, or a starting offset and number of items left. These are not supported yet.
 
 ### JSON field definitions
 
 The processor will determine the contents of a JSON Field by using the defintion with the following options:
 
-1) base dot notification, i.e. data.rolls.manager would look for the value in the incoming JSON data at data, then rolls within that, then manager within that and return the value of that field. 
+1) base dot notification, i.e. person.rolls.manager would look for the value in the incoming JSON data at person, then rolls within that, then manager within that and return the value of that field. 
 2) Single Array entry definition, i.e. person.rolls.1.skills would look for the value in the incoming JSON data at person, then rolls within that, then return the second entry in an array (0 based list) of skills each person has, assuming that 2nd entry exists<br>
-3a) All entries (match key only) i.e. person.rolls.*.skills when processing the array of data.rolls, for all entries there will be a person and one or more skills, and one or more years with that skill  if the match key is looking for a skill of manager, then a succesful match and offset in the array will be returned for that match.<br>
-3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of data.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If no matches are made then that manager wont be included<br>
+3a) All entries (match key only) i.e. person.rolls.*.skills when processing the array of person.rolls, for all entries there will be a person and one or more skills, and one or more years with that skill  if the match key is looking for a skill of manager, then a succesful match and offset in the array will be returned for that match.<br>
+3b) A found entry in a match key scenario i.e. person.rolls.?.years when processing the array of person.rolls, if the match key is succesful, then the value returned will be the years of that skill that manager has. If no matches are made then that manager wont be included<br>
 
 ### Example configuration
 
-this configuration produces multiple NDTF feeds from the UK Government fuel price data API. each output requires a separate jsonsource with a single itemfields definition. The output data is passed through the module SQLengine to format it ready for displaying through consumer-display
+this configuration produces multiple NDTF feeds from the UK Government fuel price data API. Each output can be from a separate jsonsource, or the same one, with one or more itemfield definitions. The output data is passed through the module SQLengine to format it ready for displaying through consumer-display
 
-The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module. It requires an external SQLIte database populated with postcode data. this project can be used to create and load the required table from ordance survey postcode data. https://github.com/TheBodger/SQLLitePostcodes
+The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module. It requires an external SQLIte database populated with postcode data. A separate project can be used to create and load the required table from ordance survey postcode data. https://github.com/TheBodger/SQLLitePostcodes
 
 ```
             // Fuel Finder API example config, first address information, then fule prices

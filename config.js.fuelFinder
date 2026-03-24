@@ -5,7 +5,7 @@
 		//.0 indicated take first entry in a json array
 		//.? indicated use the pagination counter
 		//.* indicated search all of the entries in the array for a match to the matchKey and if found use the value from that entry as defined in the value field
-		{
+				{
 			module: "MMM-Provider-JSON2",
 			//position: "top_left",
 			config:
@@ -14,28 +14,31 @@
 				consumerids: ["MMSE1"],
 				id: "MMJP21",
 				showDOM: false,
-				datarefreshinterval: 1000 * 60 * 60 * 24, //daily
+				datarefreshinterval: 1000 * 60 * 60 * 24,
 				payloadType: "NDTF",
 
 				jsonSource:
 					[
-						//test -- petrol API URLs - note OAUTH details are different to production
+						
+						//test -- petrol API
 
 						//{
 						//	url: "https://stg.fuel-finder.ics.gov.uk/api/v1/pfs/fuel-prices?batch-number=1", //free currency exchange service
 						//	OAUTH2_Required: true,
 						//	OAUTH2_URL: "https://stg.fuel-finder.ics.gov.uk/api/v1/oauth/generate_access_token",
-						//	OAUTH2_ID: "test id",
-						//	OAUTH2_Secret: "test secret",
-
+						//	OAUTH2_ID: "test_id",
+						//	OAUTH2_Secret: "test_secret",
+						//	itemfields:
+						//		[ ......
+						
 						//production
 
 						{
 							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
+							OAUTH2_ID: "production_id",
+							OAUTH2_Secret: "production_secret",
 							itemfields:
 								[
 									{
@@ -50,21 +53,6 @@
 										"object": "node_id",
 										"value": "location.postcode",
 									},
-								],
-							file: "",
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						},
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields:
-								[
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
@@ -77,21 +65,6 @@
 										"object": "node_id",
 										"value": "location.address_line_1",
 									},
-								],
-		
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						},
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields:
-								[
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
@@ -105,19 +78,18 @@
 										"value": "location.city",
 									},
 								],
-							file: "",
+							file: "Addresses.json",
 							usePagination: true,
 							sourceParams: {
 								autoFileUse: true,
 							},
 						},
-
-						{
+												{
 							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
+							OAUTH2_ID: "production_id",
+							OAUTH2_Secret: "production_secret",
 							itemfields:
 								[
 									{
@@ -133,22 +105,6 @@
 										"value": "fuel_prices.?.price", //note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
 										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
 									},
-								],
-		
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						},
-
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields:
-								[
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
@@ -163,15 +119,15 @@
 										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
 									},
 								],
-		
+							file: "FuelPrices.json",
 							usePagination: true,
 							sourceParams: {
 								autoFileUse: true,
 							},
-						}, 
+						},
+
 					],
 			},
-		},
 		
 		{
 			module: "MMM-SQLEngine",
