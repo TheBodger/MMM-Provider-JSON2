@@ -359,6 +359,7 @@ module.exports = NodeHelper.create({
 					}
 
 					try {
+						console.log('Fetching page with URL:', workingURL);
 						const { statusCode, JSONData, sourceHost } = await fetchPage(workingURL, options);
 
 						// Exit condition: non-200 from API signals no more pages.

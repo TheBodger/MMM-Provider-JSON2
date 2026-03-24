@@ -75,7 +75,7 @@ Module.register("MMM-Provider-JSON2", {
 
 	getScripts: function () { 
 		return [
-
+			this.file('../MMM-Structures/MMM-Structures.js'), // this file will be loaded straight from the module folder.
 		]
 	},
 

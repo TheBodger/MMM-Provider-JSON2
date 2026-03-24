@@ -86,7 +86,7 @@ Note: #these options may not be available in this version of the module.
 |	|	fraction of seconds i.e. 1 f = 10th of a second, 2 f = 100th of a second, 3 f = 1000th of a second
 |	|	autofilename is sourcename_jsonsourceindex_autoFileFormat.json converted to the actual date/time value i.e. MMM-Provider-JSON2_0_20231001.json for YYYYMMDD format on 1st October 2023, or MMM-Provider-JSON2_1_153000.json for hhmmss format at 3pm and 30 minutes. 
 | |
-| `itemfields `| *Required* - A single defintion of the input/output field processing within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
+| `itemfields `| *Required* - One or more defintions of the input/output field processing from the JSON source within a list [].<br><br> **Possible values:** See below for examples<br> **Default value:** none
 | `useSubjectKey `| *Optional* - If true, the field defined as the subject will be filled with json data, otherwise the value below will be used<br><br> **Possible values:** true or false<br> **Default value:** false
 | `fieldsNullable `| *Optional* - If false, any field containing a null will cause the record to be ignored <br><br> **Possible values:** true or false<br> **Default value:** false
 | `root `| *Optional* - A Json level definition indicating where all subsequent field definitions should start at<br><br> **Possible values:** any json level definition<br> **Default value:** ""
@@ -120,66 +120,27 @@ this configuration produces multiple NDTF feeds from the UK Government fuel pric
 The complete config for the 3 modules is included in config.js.fuelFinder downloaded with this module. It requires an external SQLIte database populated with postcode data. this project can be used to create and load the required table from ordance survey postcode data. https://github.com/TheBodger/SQLLitePostcodes
 
 ```
-{
-			module: "MMM-Provider-JSON2",
-			//position: "top_left",
-			config:
-			{
-				text: "MMM-Provider-JSON2",
-				consumerids: ["MMSE1"],
-				id: "MMJP21",
-				showDOM: false,
-				datarefreshinterval: 1000 * 60 * 60 * 24, //daily
-				payloadType: "NDTF",
-
-				jsonSource:
-					[
-						//test -- petrol API URLs - note OAUTH details are different to production
-
-						//{
-						//	url: "https://stg.fuel-finder.ics.gov.uk/api/v1/pfs/fuel-prices?batch-number=1", //free gov.uk fuel prices database - currently under development and not complete in data content (march 2026)
-						//	OAUTH2_Required: true,
-						//	OAUTH2_URL: "https://stg.fuel-finder.ics.gov.uk/api/v1/oauth/generate_access_token",
-						//	OAUTH2_ID: "test id",
-						//	OAUTH2_Secret: "test secret",
-
-						//production
-
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by default of 1 starting at default of 1.
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields: //note: this returns a set of {subject: "Station_Postcodes", object: node_id value, value: location.postcode value,timestamp: iso date = now} for each entry in the array of data returned from the API
-								[
-									{
-										"useSubjectKey": false,
-										"fieldsNullable": false,
-										"useMatchKey": false, // this ensures ALL data is returned in the output feed.
-										"matchKey": "",
-										"matchValue": "",
-										"root": "", //note that this data starts immediatly, often the data that is required can be in a paritcular subsey of a larger data set returned by the API
-										"type": "array",
-										"subject": "Station_Postcodes", 
-										"object": "node_id",
-										"value": "location.postcode",
-									},
-								],
-							file: "",
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						},
+            // Fuel Finder API example config, first address information, then fule prices
 						{
 							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
+							OAUTH2_ID: "Gt4aP83ippQiXkcfMU03EXyA7iAVpZXx",
+							OAUTH2_Secret: "GJOO83VwKaAKmzuIiHebviCXkfotSin8z6Xh7efbfBYeG8UDq5GBLTRUSTecHB1X",
 							itemfields:
 								[
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": false,
+										"matchKey": "",
+										"matchValue": "",
+										"root": "",
+										"type": "array",
+										"subject": "Station_Postcodes",
+										"object": "node_id",
+										"value": "location.postcode",
+									},
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
@@ -192,21 +153,6 @@ The complete config for the 3 modules is included in config.js.fuelFinder downlo
 										"object": "node_id",
 										"value": "location.address_line_1",
 									},
-								],
-		
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						},
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs?batch-number=%pag%", //note the pagination marker that will be replaced until a failure occurs on the page fetch, incremented by 1
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields:
-								[
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
@@ -220,74 +166,57 @@ The complete config for the 3 modules is included in config.js.fuelFinder downlo
 										"value": "location.city",
 									},
 								],
-							file: "",
+							file: "Addresses.json",
 							usePagination: true,
 							sourceParams: {
 								autoFileUse: true,
 							},
 						},
-
 						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", 
+							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", //free currency exchange service
 							OAUTH2_Required: true,
 							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
+							OAUTH2_ID: "Gt4aP83ippQiXkcfMU03EXyA7iAVpZXx",
+							OAUTH2_Secret: "GJOO83VwKaAKmzuIiHebviCXkfotSin8z6Xh7efbfBYeG8UDq5GBLTRUSTecHB1X",
 							itemfields:
 								[
 									{
 										"useSubjectKey": false,
 										"fieldsNullable": false,
 										"useMatchKey": true,
-										"matchKey": "fuel_prices.*.fuel_type", //note use of *, means search all of these values to get a match when processing each entry in the set
-										"matchValue": "E10", //note only those entries in each single data set from the API array of fuel_prices within the overall array with a field of fuel_type with a value of E10 will be included in the output feed
+										"matchKey": "fuel_prices.*.fuel_type", //note use of *, means search all of these values
+										"matchValue": "E10",
 										"root": "",
 										"type": "array",
 										"subject": "E10_Prices",
 										"object": "node_id",
-										"value": "fuel_prices.?.price", //note use of .?. if a match occurs this will be replaced by the offset into the array that matched above
-										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs this will be replaced by the offset into the array that matched
+										"value": "fuel_prices.?.price", //note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+									},
+									{
+										"useSubjectKey": false,
+										"fieldsNullable": false,
+										"useMatchKey": true,
+										"matchKey": "fuel_prices.*.fuel_type", //note use of *, means search all of these values
+										"matchValue": "B7_STANDARD",
+										"root": "",
+										"type": "array",
+										"subject": "Diesel_Prices",
+										"object": "node_id",
+										"value": "fuel_prices.?.price", //note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
+										"timestamp": "fuel_prices.?.price_change_effective_timestamp",//note use of .?. if a match occurs the match will be used to retrun the correct value from the array of data
 									},
 								],
-		
+							file: "FuelPrices.json",
 							usePagination: true,
 							sourceParams: {
 								autoFileUse: true,
 							},
 						},
 
-						{
-							url: "https://www.fuel-finder.service.gov.uk/api/v1/pfs/fuel-prices?batch-number=%pag%", 
-							OAUTH2_Required: true,
-							OAUTH2_URL: "https://www.fuel-finder.service.gov.uk/api/v1/oauth/generate_access_token",
-							OAUTH2_ID: "your-Oauth-id",
-							OAUTH2_Secret: "your-Oauth-secret",
-							itemfields:
-								[
-									{
-										"useSubjectKey": false,
-										"fieldsNullable": false,
-										"useMatchKey": true,
-										"matchKey": "fuel_prices.*.fuel_type", 
-										"matchValue": "B7_STANDARD", //note that this creates a set of diesel prices from the same api as above - this is ineffecient but using autofileuse minimises future calls to the APIs
-										"root": "",
-										"type": "array",
-										"subject": "Diesel_Prices",
-										"object": "node_id",
-										"value": "fuel_prices.?.price", 
-										"timestamp": "fuel_prices.?.price_change_effective_timestamp",
-									},
-								],
-		
-							usePagination: true,
-							sourceParams: {
-								autoFileUse: true,
-							},
-						}, 
 					],
 			},
 		},
-
 ```
 
 This example pulls data from a shares API and currency file previously loaded from an API. The feeds are later merged in sqlengine to produce a feed that shows the price of the shares in the local currency.
