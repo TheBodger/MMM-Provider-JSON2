@@ -7,7 +7,6 @@
  * MIT Licensed.
  */
 
-
 //if the module calls a RESET, then the date tracking is reset and all data will be sent
 
 //nodehelper stuff:
@@ -353,7 +352,7 @@ module.exports = NodeHelper.create({
 			});
 		};
 
-		async function fetchAllPages() {
+		async function fetchAllPages(usingAutoFile) {
 
 			try {
 				const allPages = []; // accumulate all pages in memory first
@@ -379,10 +378,16 @@ module.exports = NodeHelper.create({
 
 						if (statusCode === 200 && JSONData !== null) {
 							// JSONData is an array [{...},{...}] - spread into accumulator
-							if (usePagination[moduleinstance]) { allPages.push(...JSONData); }
-							else { allPages.push(JSONData); }
+							if (usePagination[moduleinstance])
+							{
+								allPages.push(...JSONData);
+							}
+							else
+							{
+								allPages.push(JSONData);
+							}
 							// call update per page so display refreshes incrementally
-							self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost);
+							self.update(moduleinstance, JSONData, jsonsource.itemfields, sourceHost, usingAutoFile);
 						}
 
 					} catch (e) {
@@ -456,10 +461,10 @@ module.exports = NodeHelper.create({
 			}
 		}
 
-		fetchAllPages();
+		fetchAllPages(jsonsource.sourceParams.useAutoFile);
 	},
 
-	update: function (moduleinstance, data, itemfields, sourceURL) {
+	update: function (moduleinstance, data, itemfields, sourceURL, usingAutoFile) {
 
 		//process the actual data here and return to main module.
 		//adjust the call to process if this is to be used for other data types
@@ -520,8 +525,23 @@ module.exports = NodeHelper.create({
 
 				var JSONData = data;
 
-				if (itemfield.root && itemfield.root != "") {
-					JSONData = Utilities.getkeyedJSON(data, itemfield.root);
+				// if we have a root and we used autofile and the autofile only contains one entry in the array, then send that first entry as data to ensure root works.
+
+				if (itemfield.root && itemfield.root != "" && usingAutoFile)
+				{
+					if (Array.isArray(JSONData)) {
+						if (JSONData.length == 1) {
+							JSONData = JSONData[0];
+						}
+						else {
+							console.log("----> JSONData is an array with more than 1 entry, root processing may not work as expected");
+						}
+					}
+				}
+
+				if (itemfield.root && itemfield.root != "") // && !usingAutoFile)
+				{
+					JSONData = Utilities.getkeyedJSON(JSONData, itemfield.root);
 				}
 
 				if (itemfield.type == "array") {
